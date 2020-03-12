@@ -1,0 +1,19 @@
+name = "TUI"
+uuid = "408767e4-586b-40c7-9657-f9758988469a"
+authors = ["Dheepak Krishnamurthy <me@kdheepak.com>"]
+version = "0.1.0"
+
+[deps]
+Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
+REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+TERMIOS = "10233e3b-0d6c-416a-8c1a-d3d286bd6cd2"
+TextWrap = "b718987f-49a8-5099-9789-dcd902bef87d"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
