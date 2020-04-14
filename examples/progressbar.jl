@@ -1,12 +1,13 @@
 using TUI
-
+using REPL
+using InteractiveUtils
 
 function main(max_count)
     TUI.initialize()
 
     y, x = TUI.locate_cursor()
 
-    count = 1
+    counter = 1
     t = TUI.Terminal()
 
     ADDITIVE = 1
@@ -18,13 +19,13 @@ function main(max_count)
         r = TUI.Rect(x, y + 1, w, 2)
 
         b = TUI.Block(border = TUI.BorderNone, border_type = TUI.BorderTypeHeavy)
-        pg = TUI.ProgressBar(b, count / max_count)
+        pg = TUI.ProgressBar(b, counter / max_count)
 
         TUI.draw(pg, r)
 
         TUI.flush(t)
 
-        count += 1
+        counter += 1
 
     end
 
@@ -32,7 +33,8 @@ function main(max_count)
 
     TUI.cleanup()
 
+    @code_warntype TUI.cleanup()
+
 end
 
-
-@time main(10000)
+main(10000)
