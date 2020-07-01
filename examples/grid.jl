@@ -16,7 +16,7 @@ function main()
         w, h = TUI.terminal_size()
 
         p = TUI.Grid(
-            block = TUI.Block(title = "Bar Chart"),
+            block = TUI.Block(title = "Grid"),
             data = [
                     1 2 3
                     4 5 6
