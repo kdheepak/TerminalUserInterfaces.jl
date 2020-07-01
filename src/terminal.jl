@@ -32,31 +32,12 @@ draw(terminal::Terminal, buffer1::Buffer, buffer2::Buffer) = draw(stdout, termin
 
 function draw(io, t::Terminal, buffer1::Buffer, buffer2::Buffer)
     save_cursor()
-    b1 = buffer1.content[:]
-    b2 = buffer2.content[:]
-    # a move cursor requires writing a string of 6 - 8 characters
-    # doing styles require writing a string of 5 characters
-    # undoing styles require writing a string of 5 characters
-    # might as well calculate what we need to write and do it in one shot
-    # for every character in the diff we need to write 16 - 18 additional characters if we use a diff based algorithm
-    # optimize for the case if changes are minimal, moving the cursor is more efficient
-    if count(==(0), b1 .== b2) <= length(b2) ÷ 20
-        R, C = size(buffer2.content)
-        for r = 1:R, c = 1:C
-            if buffer1.content[r, c] != buffer2.content[r, c]
-                move_cursor(r, c)
-                cell = buffer2.content[r, c]
-                print(io, cell.style, cell.char, inv(cell.style))
-            end
-        end
-    else
-        move_cursor(1, 1)
-        iob = IOBuffer()
-        for cell in permutedims(buffer2.content)[:]
-            print(iob, cell.style, cell.char, inv(cell.style))
-        end
-        print(io, String(take!(iob)))
+    move_cursor(1, 1)
+    iob = IOBuffer()
+    for cell in permutedims(buffer2.content)[:]
+        print(iob, cell.style, cell.char, inv(cell.style))
     end
+    print(io, String(take!(iob)))
     restore_cursor()
 end
 

@@ -14,7 +14,7 @@ function draw(pg::ProgressBar, rect::Rect, buf::Buffer)
 
     center = height(inner_area) ÷ 2 + top(inner_area)
 
-    crayon = Crayon(foreground = :white, background = :black)
+    crayon = Crayon(foreground = (255, 255, 255), background = (0, 0, 0))
 
     for y in top(inner_area):bottom(inner_area)
         for x in left(inner_area):right(inner_area)
