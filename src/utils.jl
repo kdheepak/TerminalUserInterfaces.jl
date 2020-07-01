@@ -7,7 +7,8 @@ const MODE = Ref{Symbol}(:default)
 
 function terminal_size(io)
     ws = TUI.IOCTL.ioctl(io, TUI.IOCTL.TIOCGWINSZ)
-    return (Int(ws.ws_row), Int(ws.ws_col))
+    # width, height
+    return (Int(ws.ws_col), Int(ws.ws_row))
 end
 terminal_size() = terminal_size(stdout)
 
