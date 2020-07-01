@@ -33,8 +33,6 @@ function main(max_count)
 
     TUI.cleanup()
 
-    @code_warntype TUI.cleanup()
-
 end
 
-main(10000)
+main(1000)
