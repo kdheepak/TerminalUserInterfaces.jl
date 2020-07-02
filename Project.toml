@@ -10,10 +10,10 @@ TERMIOS = "10233e3b-0d6c-416a-8c1a-d3d286bd6cd2"
 TextWrap = "b718987f-49a8-5099-9789-dcd902bef87d"
 
 [compat]
-julia = "1"
 Crayons = "^4"
 TERMIOS = "^0.2"
 TextWrap = "^1"
+julia = "1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
