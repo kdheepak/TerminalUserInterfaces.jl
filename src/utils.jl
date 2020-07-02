@@ -6,7 +6,7 @@ const HEIGHT = Ref{Int}()
 const MODE = Ref{Symbol}(:default)
 
 function terminal_size(io)
-    ws = TUI.IOCTL.ioctl(io, TUI.IOCTL.TIOCGWINSZ)
+    ws = IOCTL.ioctl(io, IOCTL.TIOCGWINSZ)
     # width, height
     return (Int(ws.ws_col), Int(ws.ws_row))
 end

@@ -1,4 +1,5 @@
-using TUI
+using TerminalUserInterfaces
+const TUI = TerminalUserInterfaces
 using TUI: set, width , height , left , right , top , bottom , draw , inner
 
 Base.@kwdef struct Chess

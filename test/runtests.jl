@@ -1,4 +1,5 @@
-using TUI
+using TerminalUserInterfaces
+const TUI = TerminalUserInterfaces
 using Test
 
 @testset "TUI.jl" begin

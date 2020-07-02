@@ -1,4 +1,5 @@
-using TUI
+using TerminalUserInterfaces
+const TUI = TerminalUserInterfaces
 using REPL
 using InteractiveUtils
 

@@ -1,4 +1,4 @@
-module TUI
+module TerminalUserInterfaces
 
 using REPL: Terminals
 using TERMIOS
