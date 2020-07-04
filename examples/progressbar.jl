@@ -22,7 +22,7 @@ function main(max_count)
         b = TUI.Block(border = TUI.BorderNone, border_type = TUI.BorderTypeHeavy)
         pg = TUI.ProgressBar(b, counter / max_count)
 
-        TUI.draw(pg, r)
+        TUI.draw(t, pg, r)
 
         TUI.flush(t)
 

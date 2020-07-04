@@ -29,7 +29,7 @@ function main()
 
         r = TUI.Rect(x, y, w, h)
 
-        TUI.draw(p, r)
+        TUI.draw(t, p, r)
 
         TUI.flush(t)
 

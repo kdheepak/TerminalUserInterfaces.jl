@@ -61,7 +61,7 @@ function main()
             selection,
         )
 
-        TUI.draw(p, r)
+        TUI.draw(t, p, r)
 
         TUI.flush(t)
 

@@ -97,4 +97,4 @@ function background(buf::Buffer, rect::Rect, color::Crayons.Crayon)
     end
 end
 
-draw(widget, r::Rect) = draw(widget, r, current_buffer())
+draw(t, widget, r::Rect) = draw(widget, r, current_buffer(t))

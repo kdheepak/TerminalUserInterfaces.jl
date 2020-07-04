@@ -57,14 +57,12 @@ function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     save_cursor(t)
     b1 = buffer1.content[:]
     b2 = buffer2.content[:]
-    R, C = size(buffer2.content)
-    for r = 1:R, c = 1:C
-        if buffer1.content[r, c] != buffer2.content[r, c]
-            move_cursor(t, r, c)
-            cell = buffer2.content[r, c]
-            update_channel(t, cell.style, cell.char, inv(cell.style))
-        end
+    move_cursor(t, 1, 1)
+    iob = IOBuffer()
+    for cell in permutedims(buffer2.content)[:]
+        print(iob, cell.style, cell.char, inv(cell.style))
     end
+    update_channel(t, String(take!(iob)))
     restore_cursor(t)
 end
 

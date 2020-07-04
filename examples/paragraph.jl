@@ -13,7 +13,7 @@ function main()
     TUI.clear_screen()
     TUI.hide_cursor()
 
-    words = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 50)
+    words = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 60)
 
     rng = MersenneTwister()
     styles = [
@@ -39,7 +39,7 @@ function main()
 
         w, h = TUI.terminal_size()
 
-        r = TUI.Rect(x, y, w, 15)
+        r = TUI.Rect(x, y, w, 35)
 
         b = TUI.Block(title = "Paragraph example")
         p = TUI.Paragraph(
@@ -48,7 +48,7 @@ function main()
             scroll,
         )
 
-        TUI.draw(p, r)
+        TUI.draw(t, p, r)
 
         TUI.flush(t)
 
