@@ -1,5 +1,7 @@
 module TerminalUserInterfaces
 
+__precompile__(false)
+
 using REPL: Terminals
 using TERMIOS
 using Crayons

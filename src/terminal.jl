@@ -6,18 +6,32 @@ struct Terminal
     cursor_hidden::Ref{Bool}
     terminal_size::Ref{Rect}
     keyboard_buffer::Vector{Char}
+    stdout_channel::Channel{String}
     kind::String
-    function Terminal()
+    wait::Float64
+    function Terminal(io = stdout)
         width, height = terminal_size()
         rect = Rect(1, 1, width, height)
         buffers = [Buffer(rect), Buffer(rect)]
         current = 1
         cursor_hidden = false
-        t = new(buffers, current, cursor_hidden, rect, Char[], get(ENV, "TERM", ""))
+        stdout_channel = Channel{String}(Inf)
+        _job = @async while true
+            print(io, take!(stdout_channel))
+        end
+        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, get(ENV, "TERM", ""), 1 / 1000)
         TERMINAL[] = t
         return t
     end
 end
+
+function update_channel(t, args...)
+    for arg in args
+        update_channel(t, string(arg))
+    end
+end
+update_channel(t, arg) = update_channel(t, string(arg))
+update_channel(t, arg::String) = put!(t.stdout_channel, arg)
 
 const TERMINAL = Ref{Terminal}()
 
@@ -25,20 +39,33 @@ function flush(t::Terminal)
     previous_buffer = t.buffers[END - t.current[]]
     current_buffer = t.buffers[t.current[]]
     draw(t, previous_buffer, current_buffer)
+    while isready(t.stdout_channel)
+        sleep(0.00001)
+    end
     update(t)
 end
 
-draw(terminal::Terminal, buffer1::Buffer, buffer2::Buffer) = draw(stdout, terminal, buffer1, buffer2)
+function move_cursor(t::Terminal, row, col)
+    update_channel(t, Terminals.CSI, INDICES[row], ';', INDICES[col], 'H')
+end
+save_cursor(t::Terminal) = update_channel(t, SAVECURSOR)
+restore_cursor(t::Terminal) = update_channel(t, RESTORECURSOR)
+clear_screen(t::Terminal) = update_channel(t, CLEARSCREEN)
+move_cursor_home(t::Terminal) = update_channel(t, HOMEPOSITION)
 
-function draw(io, t::Terminal, buffer1::Buffer, buffer2::Buffer)
-    save_cursor()
-    move_cursor(1, 1)
-    iob = IOBuffer()
-    for cell in permutedims(buffer2.content)[:]
-        print(iob, cell.style, cell.char, inv(cell.style))
+function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
+    save_cursor(t)
+    b1 = buffer1.content[:]
+    b2 = buffer2.content[:]
+    R, C = size(buffer2.content)
+    for r = 1:R, c = 1:C
+        if buffer1.content[r, c] != buffer2.content[r, c]
+            move_cursor(t, r, c)
+            cell = buffer2.content[r, c]
+            update_channel(t, cell.style, cell.char, inv(cell.style))
+        end
     end
-    print(io, String(take!(iob)))
-    restore_cursor()
+    restore_cursor(t)
 end
 
 current_buffer(t::Terminal)::Buffer = t.buffers[t.current[]]
@@ -52,8 +79,8 @@ function update(t::Terminal)
     w, h = terminal_size()
     if t.terminal_size[].width != w || t.terminal_size[].height != h
         resize(t, w, h)
-        clear_screen()
-        move_cursor_home()
+        clear_screen(t)
+        move_cursor_home(t)
         # TODO: we need to redraw here.
     end
 end
