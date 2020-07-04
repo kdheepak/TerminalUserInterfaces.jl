@@ -45,26 +45,38 @@ function flush(t::Terminal)
     update(t)
 end
 
-function move_cursor(t::Terminal, row, col)
-    update_channel(t, Terminals.CSI, INDICES[row], ';', INDICES[col], 'H')
-end
-save_cursor(t::Terminal) = update_channel(t, SAVECURSOR)
-restore_cursor(t::Terminal) = update_channel(t, RESTORECURSOR)
-clear_screen(t::Terminal) = update_channel(t, CLEARSCREEN)
+move_cursor(t::Terminal, row, col) = update_channel(t, Terminals.CSI, INDICES[row], ';', INDICES[col], 'H')
+move_cursor_up(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'A')
+move_cursor_down(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'B')
+move_cursor_right(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'C')
+move_cursor_left(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'D')
 move_cursor_home(t::Terminal) = update_channel(t, HOMEPOSITION)
 
-function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
-    save_cursor(t)
-    b1 = buffer1.content[:]
-    b2 = buffer2.content[:]
-    move_cursor(t, 1, 1)
-    iob = IOBuffer()
-    for cell in permutedims(buffer2.content)[:]
-        print(iob, cell.style, cell.char, inv(cell.style))
-    end
-    update_channel(t, String(take!(iob)))
-    restore_cursor(t)
-end
+clear_screen(t::Terminal) = update_channel(t, CLEARSCREEN)
+clear_screen_from_cursor_up(t::Terminal) = update_channel(t, CLEARBELOWCURSOR)
+clear_screen_from_cursor_down(t::Terminal) = update_channel(t, CLEARABOVECURSOR)
+
+clear_line(t::Terminal) = update_channel(t, CLEARLINE)
+clear_line_from_cursor_right(t::Terminal) = update_channel(t, CLEARAFTERCURSOR)
+clear_line_from_cursor_left(t::Terminal) = update_channel(t, CLEARBEFORECURSOR)
+
+hide_cursor(t::Terminal) = update_channel(t, HIDECURSOR)
+show_cursor(t::Terminal) = update_channel(t, SHOWCURSOR)
+
+save_cursor(t::Terminal) = update_channel(t, SAVECURSOR)
+restore_cursor(t::Terminal) = update_channel(t, RESTORECURSOR)
+
+change_cursor_to_blinking_block(t::Terminal) = update_channel(t, CURSORBLINKINGBLOCK)
+change_cursor_to_steady_block(t::Terminal) = update_channel(t, CURSORSTEADYBLOCK)
+change_cursor_to_blinking_underline(t::Terminal) = update_channel(t, CURSORBLINKINGUNDERLINE)
+change_cursor_to_steady_underline(t::Terminal) = update_channel(t, CURSORSTEADYUNDERLINE)
+change_cursor_to_blinking_ibeam(t::Terminal) = update_channel(t, CURSORBLINKINGIBEAM)
+change_cursor_to_steady_ibeam(t::Terminal) = update_channel(t, CURSORSTEADYIBEAM)
+
+reset(t::Terminal) = update_channel(t, RESET)
+
+tui_mode(t::Terminal) = update_channel(t, TUIMODE)
+default_mode(t::Terminal) = update_channel(t, DEFAULTMODE)
 
 current_buffer(t::Terminal)::Buffer = t.buffers[t.current[]]
 current_buffer()::Buffer = current_buffer(TERMINAL[])
@@ -81,6 +93,19 @@ function update(t::Terminal)
         move_cursor_home(t)
         # TODO: we need to redraw here.
     end
+end
+
+function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
+    save_cursor(t)
+    b1 = buffer1.content[:]
+    b2 = buffer2.content[:]
+    move_cursor(t, 1, 1)
+    iob = IOBuffer()
+    for cell in permutedims(buffer2.content)[:]
+        print(iob, cell.style, cell.char, inv(cell.style))
+    end
+    update_channel(t, String(take!(iob)))
+    restore_cursor(t)
 end
 
 function resize(t::Terminal, w::Int, h::Int)
