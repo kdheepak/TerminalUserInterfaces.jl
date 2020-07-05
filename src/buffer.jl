@@ -47,6 +47,13 @@ function set(buffer::Buffer, col::Integer, row::Integer, style::Crayons.Crayon)
     buffer.content[row, col] = Cell(buffer.content[row, col].char, style)
 end
 
+function set(buffer::Buffer, col::Integer, row::Integer, lines::Vector{T}) where T <: AbstractString
+    for line in lines
+        set(buffer, col, row, string(line))
+        row += 1
+    end
+end
+
 function set(buffer::Buffer, col::Integer, row::Integer, line::String)
     for (_col, c) in enumerate(line)
         set(buffer, col + _col - 1, row, c)
