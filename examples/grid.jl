@@ -33,7 +33,7 @@ function main()
 
         TUI.flush(t)
 
-        c = Char(read(stdin, 1)[])
+        c = TUI.get_event(t)
 
         if c == 'j'
             count += 1

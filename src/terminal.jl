@@ -7,23 +7,31 @@ struct Terminal
     terminal_size::Ref{Rect}
     keyboard_buffer::Vector{Char}
     stdout_channel::Channel{String}
+    stdin_channel::Channel{Char}
     kind::String
     wait::Float64
-    function Terminal(io = stdout)
+    function Terminal(stdout_io = stdout, stdin_io = stdin)
         width, height = terminal_size()
         rect = Rect(1, 1, width, height)
         buffers = [Buffer(rect), Buffer(rect)]
         current = 1
         cursor_hidden = false
         stdout_channel = Channel{String}(Inf)
-        _job = @async while true
-            print(io, take!(stdout_channel))
+        stdin_channel = Channel{Char}(Inf)
+        stdout_task = @async while true
+            print(stdout_io, take!(stdout_channel))
         end
-        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, get(ENV, "TERM", ""), 1 / 1000)
+        stdin_task = @async while true
+            c = Char(read(stdin_io, 1)[])
+            put!(stdin_channel, c)
+        end
+        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000)
         TERMINAL[] = t
         return t
     end
 end
+
+get_event(t) = take!(t.stdin_channel)
 
 function update_channel(t, args...)
     for arg in args

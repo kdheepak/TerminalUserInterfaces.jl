@@ -67,7 +67,7 @@ function main()
 
         count += 1
 
-        c = Char(read(stdin, 1)[])
+        c = TUI.get_event(t)
 
         if c == 'j'
             selection += 1
