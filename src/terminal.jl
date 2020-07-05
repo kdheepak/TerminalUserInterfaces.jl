@@ -48,7 +48,7 @@ function flush(t::Terminal)
     current_buffer = t.buffers[t.current[]]
     draw(t, previous_buffer, current_buffer)
     while isready(t.stdout_channel)
-        sleep(0.00001)
+        sleep(1e-6)
     end
     update(t)
 end
