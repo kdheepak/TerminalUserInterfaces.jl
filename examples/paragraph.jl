@@ -62,6 +62,9 @@ function main()
             scroll -= 1
         elseif c == 'q'
             break
+        elseif c == '\x03'
+            # keyboard interrupt
+            break
         end
         if scroll < 1
             scroll = 1
