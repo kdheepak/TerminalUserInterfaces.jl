@@ -6,7 +6,7 @@ using InteractiveUtils
 function main(max_count)
     TUI.initialize()
 
-    y, x = TUI.locate_cursor()
+    y, x = 1, 1
 
     counter = 1
     t = TUI.Terminal()

@@ -4,7 +4,7 @@ using Random
 
 function main()
     TUI.initialize()
-    y, x = TUI.locate_cursor()
+    y, x = 1, 1
 
     count = 1
     t = TUI.Terminal()
