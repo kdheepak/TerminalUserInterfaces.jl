@@ -107,7 +107,7 @@ function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     save_cursor(t)
     b1 = buffer1.content[:]
     b2 = buffer2.content[:]
-    move_cursor(t, 1, 1)
+    move_cursor_home(t)
     iob = IOBuffer()
     for cell in permutedims(buffer2.content)[:]
         print(iob, cell.style, cell.char, inv(cell.style))

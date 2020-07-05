@@ -1,30 +1,35 @@
 
-
-struct Key
-    val::Symbol
-end
-
-function poll_events(io)
-
-    inputs = Char[]
-
-    @async begin
-
-    while bytesavailable(io) != 0
-        push!(inputs, Char(read(io, 1)[]))
-    end
-
-    end
-    # if inputs[1] == '\x11' # CTRL + Q
-    #     break
-    # elseif String(inputs) == "\e[A" # ⬆
-    #     move_square_up(c)
-    # elseif String(inputs) == "\e[B" # ⬇
-    #     move_square_down(c)
-    # elseif String(inputs) == "\e[C" # ➡
-    #     move_square_right(c)
-    # elseif String(inputs) == "\e[D" # ⬅
-    #     move_square_left(c)
-    # end
-
-end
+const KEY_MAPPING = Dict{Char, Symbol}(
+   '\x00' => Symbol("Ctrl@"),
+   '\x01' => Symbol("CtrlA"),
+   '\x02' => Symbol("CtrlB"),
+   '\x03' => Symbol("CtrlC"),
+   '\x04' => Symbol("CtrlD"),
+   '\x05' => Symbol("CtrlE"),
+   '\x06' => Symbol("CtrlF"),
+   '\x07' => Symbol("CtrlG"),
+   '\x08' => Symbol("CtrlH"),
+   '\x09' => Symbol("CtrlI"),
+   '\x0A' => Symbol("CtrlJ"),
+   '\x0B' => Symbol("CtrlK"),
+   '\x0C' => Symbol("CtrlL"),
+   '\x0D' => Symbol("CtrlM"),
+   '\x0E' => Symbol("CtrlN"),
+   '\x0F' => Symbol("CtrlO"),
+   '\x10' => Symbol("CtrlP"),
+   '\x11' => Symbol("CtrlQ"),
+   '\x12' => Symbol("CtrlR"),
+   '\x13' => Symbol("CtrlS"),
+   '\x14' => Symbol("CtrlT"),
+   '\x15' => Symbol("CtrlU"),
+   '\x16' => Symbol("CtrlV"),
+   '\x17' => Symbol("CtrlW"),
+   '\x18' => Symbol("CtrlX"),
+   '\x19' => Symbol("CtrlY"),
+   '\x1A' => Symbol("CtrlZ"),
+   '\x1B' => Symbol("Ctrl["),
+   '\x1C' => Symbol("Ctrl\\"),
+   '\x1D' => Symbol("Ctrl]"),
+   '\x1E' => Symbol("Ctrl^"),
+   '\x1F' => Symbol("Ctrl_"),
+)
