@@ -13,7 +13,7 @@ struct Rect
 end
 
 function Rect(x, y, aspect_ratio::Rational)
-    h = √(max_area / aspect_ratio)
+    h = √(MAX_AREA / aspect_ratio)
     w = h * aspect_ratio
     return Rect(x, y, w, h)
 end
