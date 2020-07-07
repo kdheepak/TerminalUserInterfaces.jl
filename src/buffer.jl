@@ -24,7 +24,6 @@ function Buffer(rect::Rect, cell::Cell)
 end
 
 function Buffer(lines::Vector{String})
-
     height = length(lines)
     width = maximum(length(l) for l in lines)
     buffer = Buffer(

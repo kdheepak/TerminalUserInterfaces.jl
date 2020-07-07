@@ -31,7 +31,13 @@ struct Terminal
     end
 end
 
-get_event(t) = take!(t.stdin_channel)
+function get_event(t)
+    return if isready(t.stdin_channel)
+        take!(t.stdin_channel)
+    else
+        nothing
+    end
+end
 
 function update_channel(t, args...)
     for arg in args
