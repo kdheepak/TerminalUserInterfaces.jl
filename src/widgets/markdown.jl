@@ -45,7 +45,7 @@ function draw(l::Markdown.List, area::Rect, buf::Buffer)
         )
         row = top(item_area)
         col = left(item_area)
-        set(buf, col, row, " * ", Crayon(bold = true, foreground = :red))
+        set(buf, col, row, " ● ", Crayon(bold = true, foreground = :red))
         inner_area = Rect(item_area, Margin(0, 5))
         draw(item[1], inner_area, buf)
     end
