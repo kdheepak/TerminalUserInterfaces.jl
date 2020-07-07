@@ -23,6 +23,7 @@ include("widgets/widgets.jl")
 
 include("widgets/block.jl")
 
+include("widgets/markdown.jl")
 include("widgets/paragraph.jl")
 include("widgets/progressbar.jl")
 include("widgets/list.jl")
