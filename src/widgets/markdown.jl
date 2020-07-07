@@ -69,6 +69,8 @@ function draw(p::Markdown.Paragraph, area::Rect, buf::Buffer)
             l = length(c.text[1])
             set(buf, col, row, c.text[1], Crayon(italics = true))
             col += l
+        elseif typeof(c) == Markdown.Image
+            draw(c, area, buf)
         end
     end
 
