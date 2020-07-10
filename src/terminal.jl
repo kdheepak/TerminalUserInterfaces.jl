@@ -10,6 +10,7 @@ struct Terminal
     stdin_channel::Channel{Char}
     kind::String
     wait::Float64
+    ispaused::Ref{Bool}
     function Terminal(stdout_io = stdout, stdin_io = stdin)
         width, height = terminal_size()
         rect = Rect(1, 1, width, height)
@@ -18,14 +19,23 @@ struct Terminal
         cursor_hidden = false
         stdout_channel = Channel{String}(Inf)
         stdin_channel = Channel{Char}(Inf)
+        ispaused = Ref{Bool}(false)
         stdout_task = @async while true
+            if ispaused[] == true
+                sleep(1)
+                continue
+            end
             print(stdout_io, take!(stdout_channel))
         end
         stdin_task = @async while true
+            if ispaused[] == true
+                sleep(1)
+                continue
+            end
             c = Char(read(stdin_io, 1)[])
             put!(stdin_channel, c)
         end
-        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000)
+        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000, ispaused)
         TERMINAL[] = t
         return t
     end
@@ -49,10 +59,14 @@ update_channel(t, arg::String) = put!(t.stdout_channel, arg)
 
 const TERMINAL = Ref{Terminal}()
 
-function flush(t::Terminal)
+function flush(t::Terminal, diff = true)
     previous_buffer = t.buffers[END - t.current[]]
     current_buffer = t.buffers[t.current[]]
-    draw(t, previous_buffer, current_buffer)
+    if diff
+        draw(t, previous_buffer, current_buffer)
+    else
+        draw(t, current_buffer)
+    end
     while isready(t.stdout_channel)
         sleep(1e-6)
     end
@@ -109,16 +123,34 @@ function update(t::Terminal)
     end
 end
 
+function draw(t::Terminal, buffer::Buffer)
+    save_cursor(t)
+    move_cursor_home(t)
+    iob = IOBuffer()
+    for cell in permutedims(buffer.content)[:]
+        print(iob, cell.style, cell.char, inv(cell.style))
+    end
+    update_channel(t, String(take!(iob)))
+    restore_cursor(t)
+    while isready(t.stdout_channel)
+        sleep(1e-6)
+    end
+    update(t)
+end
+
 function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     save_cursor(t)
     b1 = buffer1.content[:]
     b2 = buffer2.content[:]
     move_cursor_home(t)
-    iob = IOBuffer()
-    for cell in permutedims(buffer2.content)[:]
-        print(iob, cell.style, cell.char, inv(cell.style))
+    R, C = size(buffer2.content)
+    for r = 1:R, c = 1:C
+        if buffer1.content[r, c] != buffer2.content[r, c]
+            move_cursor(t, r, c)
+            cell = buffer2.content[r, c]
+            update_channel(t, cell.style, cell.char, inv(cell.style))
+        end
     end
-    update_channel(t, String(take!(iob)))
     restore_cursor(t)
 end
 

@@ -99,6 +99,8 @@ tui_mode() = print(stdout, TUIMODE)
 default_mode() = print(stdout, DEFAULTMODE)
 
 function with_raw_mode(f::Function)
+    # if already in in raw mode don't enter raw mode again.
+    # entering raw mode
     entered_raw_mode = false
     if MODE[] != :raw
         enable_raw_mode()
@@ -179,14 +181,14 @@ function enable_raw_mode()
     termios.c_cc[TERMIOS.VMIN] = 0
     termios.c_cc[TERMIOS.VTIME] = 1
     TERMIOS.tcsetattr(stdin, TERMIOS.TCSANOW, termios)
-    MODE[] = :raw
 end
 
 function disable_raw_mode()
     TERMIOS.tcsetattr(stdin, TERMIOS.TCSANOW, BACKUP_STDIN_TERMIOS[])
+    MODE[] = :default
 end
 
-function initialize_backup_termios()
+function backup_termios()
     BACKUP_STDIN_TERMIOS[] = TERMIOS.termios()
     BACKUP_STDOUT_TERMIOS[] = TERMIOS.termios()
     TERMIOS.tcgetattr(stdin, BACKUP_STDIN_TERMIOS[])
@@ -194,7 +196,6 @@ function initialize_backup_termios()
 end
 
 function initialize()
-    initialize_backup_termios()
     tui_mode()
     hide_cursor()
     enable_raw_mode()
