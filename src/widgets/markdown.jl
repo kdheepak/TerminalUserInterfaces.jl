@@ -36,9 +36,15 @@ end
 
 function draw(l::Markdown.List, area::Rect, buf::Buffer)
 
+    _s = String[]
+    for item in l.items
+        iob = IOBuffer()
+        print(iob, item[1])
+        push!(_s, String(take!(iob)))
+    end
     for (i, item) in enumerate(l.items)
         item_area = Rect(
-            left(area),
+            left(area) + maximum(length.(_s)) ÷ 2,
             top(area) + (i - 1) * (height(area) ÷ length(l.items)),
             width(area),
             height(area) ÷ length(l.items)
