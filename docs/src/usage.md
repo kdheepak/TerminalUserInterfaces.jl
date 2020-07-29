@@ -133,7 +133,25 @@ This function is non-blocking. You can also call `take!(t.stdin_channel)` to blo
 
 Drawing, taking user input and acting on it and redrawing is what your main loop of the terminal user interface will look like.
 
+For this example, we can get an "event" (which is just a `Char`) and change the selection if it is `j` or `k`.
+And if the user hits `\r`, we can pick the selection and break out of the main loop.
+
+```
+    c = TUI.get_event(t)
+
+    if c == 'j'
+        selection += 1
+    elseif c == 'k'
+        selection -= 1
+    elseif c == '\r'
+        final = words[selection].text
+        break
+    end
+```
+
 ### Minimum Working Example
+
+Here is a working example of what it takes to create a option picker.
 
 ```julia
 using TerminalUserInterfaces
@@ -147,7 +165,6 @@ function main()
     count = 1
     t = TUI.Terminal()
 
-    # TUI.enableRawMode()
     TUI.clear_screen()
     TUI.hide_cursor()
 
@@ -165,17 +182,6 @@ function main()
 
     rng = MersenneTwister()
     styles = [
-        # TUI.Crayon(bold = true)
-        # TUI.Crayon(italics = true)
-        # TUI.Crayon(foreground = :red)
-        # TUI.Crayon(foreground = :blue)
-        # TUI.Crayon(foreground = :green)
-        # TUI.Crayon(bold = true, foreground = :red)
-        # TUI.Crayon(bold = true, foreground = :blue)
-        # TUI.Crayon(bold = true, foreground = :green)
-        # TUI.Crayon(italics = true, foreground = :red)
-        # TUI.Crayon(italics = true, foreground = :blue)
-        # TUI.Crayon(italics = true, foreground = :green)
         TUI.Crayon()
     ]
 
@@ -232,3 +238,6 @@ end
 
 main()
 ```
+
+There are more examples in the repository.
+See implementations of widgets for how to create your own widgets to work in `TerminalUserInterfaces.jl`.
