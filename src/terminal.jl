@@ -1,5 +1,8 @@
 import Base.print
 
+"""
+Terminal
+"""
 struct Terminal
     buffers::Vector{Buffer}
     current::Ref{UInt8}
@@ -41,6 +44,9 @@ struct Terminal
     end
 end
 
+"""
+Get key press
+"""
 function get_event(t)
     return if isready(t.stdin_channel)
         take!(t.stdin_channel)
@@ -59,6 +65,9 @@ update_channel(t, arg::String) = put!(t.stdout_channel, arg)
 
 const TERMINAL = Ref{Terminal}()
 
+"""
+Flush terminal contents
+"""
 function flush(t::Terminal, diff = true)
     previous_buffer = t.buffers[END - t.current[]]
     current_buffer = t.buffers[t.current[]]
@@ -73,44 +82,128 @@ function flush(t::Terminal, diff = true)
     update(t)
 end
 
+"""
+Move cursor
+"""
 move_cursor(t::Terminal, row, col) = update_channel(t, Terminals.CSI, INDICES[row], ';', INDICES[col], 'H')
+"""
+Move cursor up
+"""
 move_cursor_up(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'A')
+"""
+Move cursor down
+"""
 move_cursor_down(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'B')
+"""
+Move cursor right
+"""
 move_cursor_right(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'C')
+"""
+Move cursor left
+"""
 move_cursor_left(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'D')
+"""
+Move cursor home
+"""
 move_cursor_home(t::Terminal) = update_channel(t, HOMEPOSITION)
 
+"""
+Clear screen
+"""
 clear_screen(t::Terminal) = update_channel(t, CLEARSCREEN)
+"""
+Clear screen from cursor up onwards
+"""
 clear_screen_from_cursor_up(t::Terminal) = update_channel(t, CLEARBELOWCURSOR)
+"""
+Clear screen from cursor down onwards
+"""
 clear_screen_from_cursor_down(t::Terminal) = update_channel(t, CLEARABOVECURSOR)
 
+"""
+Clear line
+"""
 clear_line(t::Terminal) = update_channel(t, CLEARLINE)
+"""
+Clear line from cursor right onwards
+"""
 clear_line_from_cursor_right(t::Terminal) = update_channel(t, CLEARAFTERCURSOR)
+"""
+Clear line from cursor left onwards
+"""
 clear_line_from_cursor_left(t::Terminal) = update_channel(t, CLEARBEFORECURSOR)
 
+"""
+Hide cursor
+"""
 hide_cursor(t::Terminal) = update_channel(t, HIDECURSOR)
+"""
+Show cursor
+"""
 show_cursor(t::Terminal) = update_channel(t, SHOWCURSOR)
 
+"""
+Save cursor
+"""
 save_cursor(t::Terminal) = update_channel(t, SAVECURSOR)
+"""
+Restore cursor
+"""
 restore_cursor(t::Terminal) = update_channel(t, RESTORECURSOR)
 
+"""
+Change cursor to blinking block
+"""
 change_cursor_to_blinking_block(t::Terminal) = update_channel(t, CURSORBLINKINGBLOCK)
+"""
+Change cursor to steady block
+"""
 change_cursor_to_steady_block(t::Terminal) = update_channel(t, CURSORSTEADYBLOCK)
+"""
+Change cursor to blinking underline
+"""
 change_cursor_to_blinking_underline(t::Terminal) = update_channel(t, CURSORBLINKINGUNDERLINE)
+"""
+Change cursor to steady underline
+"""
 change_cursor_to_steady_underline(t::Terminal) = update_channel(t, CURSORSTEADYUNDERLINE)
+"""
+Change cursor to blinking ibeam
+"""
 change_cursor_to_blinking_ibeam(t::Terminal) = update_channel(t, CURSORBLINKINGIBEAM)
+"""
+Change cursor to steady ibeam
+"""
 change_cursor_to_steady_ibeam(t::Terminal) = update_channel(t, CURSORSTEADYIBEAM)
 
+"""
+Reset terminal settings
+"""
 reset(t::Terminal) = update_channel(t, RESET)
 
+"""
+Alternate screen TUI mode
+"""
 tui_mode(t::Terminal) = update_channel(t, TUIMODE)
+"""
+Default mode
+"""
 default_mode(t::Terminal) = update_channel(t, DEFAULTMODE)
 
+"""
+Get current buffer
+"""
 current_buffer(t::Terminal)::Buffer = t.buffers[t.current[]]
 current_buffer()::Buffer = current_buffer(TERMINAL[])
 
+"""
+Reset terminal
+"""
 reset(t::Terminal, buffer::Int) = reset(t.buffers[buffer])
 
+"""
+Update terminal
+"""
 function update(t::Terminal)
     reset(t.buffers[END - t.current[]])
     t.current[] = END - t.current[]
@@ -123,6 +216,9 @@ function update(t::Terminal)
     end
 end
 
+"""
+Draw terminal
+"""
 function draw(t::Terminal, buffer::Buffer)
     save_cursor(t)
     move_cursor_home(t)
@@ -138,6 +234,9 @@ function draw(t::Terminal, buffer::Buffer)
     update(t)
 end
 
+"""
+Draw terminal
+"""
 function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     save_cursor(t)
     b1 = buffer1.content[:]
@@ -154,6 +253,9 @@ function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     restore_cursor(t)
 end
 
+"""
+Resize terminal
+"""
 function resize(t::Terminal, w::Int, h::Int)
     rect = Rect(1, 1, w, h)
     t.terminal_size[] = rect
@@ -161,6 +263,9 @@ function resize(t::Terminal, w::Int, h::Int)
     t.buffers[2] = Buffer(rect)
 end
 
+"""
+Locate cursor
+"""
 function locate_cursor(t::Terminal)
     ucs = Char[]
     while length(t.keyboard_buffer) > 0
