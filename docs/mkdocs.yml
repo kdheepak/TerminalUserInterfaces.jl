@@ -1,0 +1,46 @@
+site_name: 'TerminalUserInterfaces.jl'
+site_author: 'Dheepak Krishnamurthy'
+
+repo_name: 'GitHub'
+repo_url: 'https://github.com/kdheepak/TerminalUserInterfaces.jl'
+edit_uri: 'tree/master/docs/src'
+
+pages:
+  - Home: index.md
+  - Usage: usage.md
+  - API: api.md
+
+docs_dir: 'build'
+
+# theme: readthedocs
+theme: material
+
+extra:
+  author:
+    github: 'kdheepak'
+  palette:
+    primary: 'deep orange'
+    accent: 'indigo'
+  # version: 0.7.4
+
+markdown_extensions:
+    - admonition
+    - codehilite
+    - pymdownx.arithmatex
+    - pymdownx.details
+    - mdx_math
+    - codehilite
+    - extra
+    - tables
+    - fenced_code
+    - footnotes
+    - meta
+    - toc
+
+extra_css:
+- assets\Documenter.css
+
+extra_javascript: [
+     'mathjax-config.js',
+     'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML'
+]
