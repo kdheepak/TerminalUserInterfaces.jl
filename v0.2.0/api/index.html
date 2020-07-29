@@ -1,0 +1,473 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <meta name="author" content="Dheepak Krishnamurthy">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.0">
+    
+    
+      
+        <title>API - TerminalUserInterfaces.jl</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.b5d04df8.min.css">
+      
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../assets/Documenter.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="TerminalUserInterfaces.jl" class="md-header-nav__button md-logo" aria-label="TerminalUserInterfaces.jl">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            TerminalUserInterfaces.jl
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              API
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/kdheepak/TerminalUserInterfaces.jl/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="TerminalUserInterfaces.jl" class="md-nav__button md-logo" aria-label="TerminalUserInterfaces.jl">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    TerminalUserInterfaces.jl
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/kdheepak/TerminalUserInterfaces.jl/" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../usage/" title="Usage" class="md-nav__link">
+      Usage
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+    <a href="./" title="API" class="md-nav__link md-nav__link--active">
+      API
+    </a>
+    
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/kdheepak/TerminalUserInterfaces.jl/tree/master/docs/src/api.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                  
+                
+                
+                <p><a id='API'></a></p>
+<p><a id='API-1'></a></p>
+<h1 id="api">API</h1>
+<p>This is the API for the TerminalUserInterfaces</p>
+<p><a id='TerminalUserInterfaces.Terminal' href='#TerminalUserInterfaces.Terminal'>#</a>
+<strong><code>TerminalUserInterfaces.Terminal</code></strong> &mdash; <em>Type</em>.</p>
+<p>Terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L3-L5' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_blinking_block-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_blinking_block-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_blinking_block</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to blinking block</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L154-L156' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_blinking_ibeam-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_blinking_ibeam-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_blinking_ibeam</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to blinking ibeam</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L170-L172' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_blinking_underline-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_blinking_underline-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_blinking_underline</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to blinking underline</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L162-L164' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_steady_block-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_steady_block-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_steady_block</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to steady block</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L158-L160' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_steady_ibeam-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_steady_ibeam-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_steady_ibeam</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to steady ibeam</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L174-L176' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.change_cursor_to_steady_underline-Tuple{Terminal}' href='#TerminalUserInterfaces.change_cursor_to_steady_underline-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.change_cursor_to_steady_underline</code></strong> &mdash; <em>Method</em>.</p>
+<p>Change cursor to steady underline</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L166-L168' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_line-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_line-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_line</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear line</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L123-L125' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_line_from_cursor_left-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_line_from_cursor_left-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_line_from_cursor_left</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear line from cursor left onwards</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L131-L133' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_line_from_cursor_right-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_line_from_cursor_right-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_line_from_cursor_right</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear line from cursor right onwards</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L127-L129' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_screen-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_screen-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_screen</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear screen</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L110-L112' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_screen_from_cursor_down-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_screen_from_cursor_down-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_screen_from_cursor_down</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear screen from cursor down onwards</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L118-L120' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.clear_screen_from_cursor_up-Tuple{Terminal}' href='#TerminalUserInterfaces.clear_screen_from_cursor_up-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.clear_screen_from_cursor_up</code></strong> &mdash; <em>Method</em>.</p>
+<p>Clear screen from cursor up onwards</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L114-L116' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.current_buffer-Tuple{Terminal}' href='#TerminalUserInterfaces.current_buffer-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.current_buffer</code></strong> &mdash; <em>Method</em>.</p>
+<p>Get current buffer</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L193-L195' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.default_mode-Tuple{Terminal}' href='#TerminalUserInterfaces.default_mode-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.default_mode</code></strong> &mdash; <em>Method</em>.</p>
+<p>Default mode</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L188-L190' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.draw-Tuple{Terminal,TerminalUserInterfaces.Buffer,TerminalUserInterfaces.Buffer}' href='#TerminalUserInterfaces.draw-Tuple{Terminal,TerminalUserInterfaces.Buffer,TerminalUserInterfaces.Buffer}'>#</a>
+<strong><code>TerminalUserInterfaces.draw</code></strong> &mdash; <em>Method</em>.</p>
+<p>Draw terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L237-L239' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.draw-Tuple{Terminal,TerminalUserInterfaces.Buffer}' href='#TerminalUserInterfaces.draw-Tuple{Terminal,TerminalUserInterfaces.Buffer}'>#</a>
+<strong><code>TerminalUserInterfaces.draw</code></strong> &mdash; <em>Method</em>.</p>
+<p>Draw terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L219-L221' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.flush' href='#TerminalUserInterfaces.flush'>#</a>
+<strong><code>TerminalUserInterfaces.flush</code></strong> &mdash; <em>Function</em>.</p>
+<p>Flush terminal contents</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L68-L70' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.get_event-Tuple{Any}' href='#TerminalUserInterfaces.get_event-Tuple{Any}'>#</a>
+<strong><code>TerminalUserInterfaces.get_event</code></strong> &mdash; <em>Method</em>.</p>
+<p>Get key press</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L47-L49' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.hide_cursor-Tuple{Terminal}' href='#TerminalUserInterfaces.hide_cursor-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.hide_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Hide cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L136-L138' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.locate_cursor-Tuple{Terminal}' href='#TerminalUserInterfaces.locate_cursor-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.locate_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Locate cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L266-L268' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor-Tuple{Terminal,Any,Any}' href='#TerminalUserInterfaces.move_cursor-Tuple{Terminal,Any,Any}'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Move cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L85-L87' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor_down' href='#TerminalUserInterfaces.move_cursor_down'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor_down</code></strong> &mdash; <em>Function</em>.</p>
+<p>Move cursor down</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L93-L95' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor_home-Tuple{Terminal}' href='#TerminalUserInterfaces.move_cursor_home-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor_home</code></strong> &mdash; <em>Method</em>.</p>
+<p>Move cursor home</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L105-L107' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor_left' href='#TerminalUserInterfaces.move_cursor_left'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor_left</code></strong> &mdash; <em>Function</em>.</p>
+<p>Move cursor left</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L101-L103' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor_right' href='#TerminalUserInterfaces.move_cursor_right'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor_right</code></strong> &mdash; <em>Function</em>.</p>
+<p>Move cursor right</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L97-L99' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.move_cursor_up' href='#TerminalUserInterfaces.move_cursor_up'>#</a>
+<strong><code>TerminalUserInterfaces.move_cursor_up</code></strong> &mdash; <em>Function</em>.</p>
+<p>Move cursor up</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L89-L91' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.reset-Tuple{Terminal,Int64}' href='#TerminalUserInterfaces.reset-Tuple{Terminal,Int64}'>#</a>
+<strong><code>TerminalUserInterfaces.reset</code></strong> &mdash; <em>Method</em>.</p>
+<p>Reset terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L199-L201' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.reset-Tuple{Terminal}' href='#TerminalUserInterfaces.reset-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.reset</code></strong> &mdash; <em>Method</em>.</p>
+<p>Reset terminal settings</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L179-L181' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.resize-Tuple{Terminal,Int64,Int64}' href='#TerminalUserInterfaces.resize-Tuple{Terminal,Int64,Int64}'>#</a>
+<strong><code>TerminalUserInterfaces.resize</code></strong> &mdash; <em>Method</em>.</p>
+<p>Resize terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L256-L258' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.restore_cursor-Tuple{Terminal}' href='#TerminalUserInterfaces.restore_cursor-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.restore_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Restore cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L149-L151' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.save_cursor-Tuple{Terminal}' href='#TerminalUserInterfaces.save_cursor-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.save_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Save cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L145-L147' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.show_cursor-Tuple{Terminal}' href='#TerminalUserInterfaces.show_cursor-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.show_cursor</code></strong> &mdash; <em>Method</em>.</p>
+<p>Show cursor</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L140-L142' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.tui_mode-Tuple{Terminal}' href='#TerminalUserInterfaces.tui_mode-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.tui_mode</code></strong> &mdash; <em>Method</em>.</p>
+<p>Alternate screen TUI mode</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L184-L186' class='documenter-source'>source</a><br></p>
+<p><a id='TerminalUserInterfaces.update-Tuple{Terminal}' href='#TerminalUserInterfaces.update-Tuple{Terminal}'>#</a>
+<strong><code>TerminalUserInterfaces.update</code></strong> &mdash; <em>Method</em>.</p>
+<p>Update terminal</p>
+<p><a target='_blank' href='https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/8a584d689cd7c730fb065ce6d01b1ef2c7dfd125/src/terminal.jl#L204-L206' class='documenter-source'>source</a><br></p>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../usage/" title="Usage" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Usage
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.92ffa368.min.js"></script>
+      <script src="../assets/javascripts/bundle.5123e3d4.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="../mathjax-config.js"></script>
+      
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+      
+    
+  </body>
+</html>
