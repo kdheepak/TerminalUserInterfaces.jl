@@ -11,7 +11,6 @@ deploydocs(
     repo = "github.com/kdheepak/TerminalUserInterfaces.jl.git",
     deps = Deps.pip(
                    "mkdocs",
-                   "mkdocs-material",
                    "python-markdown-math",
                    "pygments",
                    ),
