@@ -196,6 +196,7 @@ function backup_termios()
 end
 
 function initialize()
+    backup_termios()
     tui_mode()
     hide_cursor()
     enable_raw_mode()
