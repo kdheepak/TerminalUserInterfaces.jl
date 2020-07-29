@@ -10,11 +10,10 @@ makedocs(
 deploydocs(
     repo = "github.com/kdheepak/TerminalUserInterfaces.jl.git",
     deps = Deps.pip(
-                   "mkdocs==0.17.5",
-                   "mkdocs-material==2.9.4",
+                   "mkdocs",
+                   "mkdocs-material",
                    "python-markdown-math",
                    "pygments",
-                   "pymdown-extensions",
                    ),
     make = () -> run(`mkdocs build`),
     target = "site",
