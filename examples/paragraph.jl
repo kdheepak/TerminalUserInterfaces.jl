@@ -50,7 +50,7 @@ function main()
 
         TUI.draw(t, p, r)
 
-        TUI.flush(t)
+        TUI.flush(t, false)
 
         count += 1
 
