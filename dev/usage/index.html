@@ -488,9 +488,24 @@
 
 <p>This function is non-blocking. You can also call <code>take!(t.stdin_channel)</code> to block till the user presses a key.</p>
 <p>Drawing, taking user input and acting on it and redrawing is what your main loop of the terminal user interface will look like.</p>
+<p>For this example, we can get an "event" (which is just a <code>Char</code>) and change the selection if it is <code>j</code> or <code>k</code>. And if the user hits <code>\r</code>, we can pick the selection and break out of the main loop.</p>
+<div class="codehilite"><pre><span></span><code><span class="w">    </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TUI</span><span class="p">.</span><span class="n">get_event</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;j&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="n">selection</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">    </span><span class="n">elseif</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;k&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="n">selection</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
+<span class="w">    </span><span class="n">elseif</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;\r&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="n">final</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">words</span><span class="o">[</span><span class="n">selection</span><span class="o">]</span><span class="p">.</span><span class="nc">text</span><span class="w"></span>
+<span class="w">        </span><span class="k">break</span><span class="w"></span>
+<span class="w">    </span><span class="k">end</span><span class="w"></span>
+</code></pre></div>
+
+
 <p><a id='Minimum-Working-Example'></a></p>
 <p><a id='Minimum-Working-Example-1'></a></p>
 <h3 id="minimum-working-example">Minimum Working Example</h3>
+<p>Here is a working example of what it takes to create a option picker.</p>
 <div class="codehilite"><pre><span></span><code><span class="k">using</span> <span class="n">TerminalUserInterfaces</span>
 <span class="kd">const</span> <span class="n">TUI</span> <span class="o">=</span> <span class="n">TerminalUserInterfaces</span>
 <span class="k">using</span> <span class="n">Random</span>
@@ -502,7 +517,6 @@
     <span class="n">count</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">t</span> <span class="o">=</span> <span class="n">TUI</span><span class="o">.</span><span class="n">Terminal</span><span class="p">()</span>
 
-    <span class="c"># TUI.enableRawMode()</span>
     <span class="n">TUI</span><span class="o">.</span><span class="n">clear_screen</span><span class="p">()</span>
     <span class="n">TUI</span><span class="o">.</span><span class="n">hide_cursor</span><span class="p">()</span>
 
@@ -520,17 +534,6 @@
 
     <span class="n">rng</span> <span class="o">=</span> <span class="kt">MersenneTwister</span><span class="p">()</span>
     <span class="n">styles</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="c"># TUI.Crayon(bold = true)</span>
-        <span class="c"># TUI.Crayon(italics = true)</span>
-        <span class="c"># TUI.Crayon(foreground = :red)</span>
-        <span class="c"># TUI.Crayon(foreground = :blue)</span>
-        <span class="c"># TUI.Crayon(foreground = :green)</span>
-        <span class="c"># TUI.Crayon(bold = true, foreground = :red)</span>
-        <span class="c"># TUI.Crayon(bold = true, foreground = :blue)</span>
-        <span class="c"># TUI.Crayon(bold = true, foreground = :green)</span>
-        <span class="c"># TUI.Crayon(italics = true, foreground = :red)</span>
-        <span class="c"># TUI.Crayon(italics = true, foreground = :blue)</span>
-        <span class="c"># TUI.Crayon(italics = true, foreground = :green)</span>
         <span class="n">TUI</span><span class="o">.</span><span class="n">Crayon</span><span class="p">()</span>
     <span class="p">]</span>
 
@@ -587,6 +590,9 @@
 
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
+
+
+<p>There are more examples in the repository. See implementations of widgets for how to create your own widgets to work in <code>TerminalUserInterfaces.jl</code>.</p>
                 
               
               
