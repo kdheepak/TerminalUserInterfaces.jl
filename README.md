@@ -19,7 +19,8 @@ Create TerminalUserInterfaces in Julia.
 
 See [documentation](https://kdheepak.com/TerminalUserInterfaces.jl/) and [examples folder](./examples) for information how to use the package.
 
-### References
+### Related work
 
 - [blessed-contrib](https://github.com/yaronn/blessed-contrib)
 - [tui-rs](https://github.com/fdehau/tui-rs)
+- [TextUserInterfaces.jl](https://github.com/ronisbr/TextUserInterfaces.jl/)
