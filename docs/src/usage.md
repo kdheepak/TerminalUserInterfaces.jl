@@ -43,6 +43,7 @@ TUI.initialize()
 This function does a few things:
 
 ```julia
+backup_termios()
 tui_mode()
 hide_cursor()
 enable_raw_mode()
@@ -50,6 +51,7 @@ clear_screen()
 move_cursor_home()
 ```
 
+- `backup_termios()`: backups termios settings to recover back to default terminal settings
 - `tui_mode()`: starts an alternate buffer
 - `hide_cursor()`: makes cursor not visible
 - `enable_raw_mode()`: capture key presses as they happen without waiting for the enter key
