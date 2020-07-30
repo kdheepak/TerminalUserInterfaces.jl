@@ -19,6 +19,10 @@ Create TerminalUserInterfaces in Julia.
 
 See [documentation](https://kdheepak.com/TerminalUserInterfaces.jl/) and [examples folder](./examples) for information how to use the package.
 
+Check out my JuliaCon talk where I use this package to make a presentation in the terminal.
+
+[![](https://img.youtube.com/vi/-TASx67pphw/0.jpg)](https://www.youtube.com/watch?v=-TASx67pphw)
+
 ### Related work
 
 - [blessed-contrib](https://github.com/yaronn/blessed-contrib)
