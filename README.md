@@ -3,7 +3,7 @@
 ![CI](https://github.com/kdheepak/TerminalUserInterfaces.jl/workflows/CI/badge.svg)
 ![](https://img.shields.io/github/license/kdheepak/TerminalUserInterfaces.jl)
 [![](https://img.shields.io/github/v/release/kdheepak/TerminalUserInterfaces.jl)](https://github.com/kdheepak/TerminalUserInterfaces.jl/releases/latest)
-[![](https://img.shields.io/badge/docs-ready-blue.svg)](https://kdheepak.com/TerminalUserInterfaces.jl)
+[![](https://img.shields.io/badge/docs-ready-blue.svg)](https://kdheepak.github.io/TerminalUserInterfaces.jl)
 
 Create TerminalUserInterfaces in Julia.
 
