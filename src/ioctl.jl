@@ -1,21 +1,131 @@
 module IOCTL
 
-const TIOCGETP = Sys.islinux() ? 0 : 1074164744 # Get parameters -- V6/V7 gtty()
-const TIOCSETP = Sys.islinux() ? 1 : -2147060727 # Set parameters -- V6/V7 stty()
 
-const TIOCSETN = 2 # V7:   as above, but no flushtty
-const TIOCEXCL = 3 # V7: set exclusive use of tty
-const TIOCNXCL = 4 # V7: reset excl. use of tty
-const TIOCHPCL = 5 # V7: hang up on last close
-const TIOCFLUSH = 6 # V7: flush buffers
+if Sys.islinux()
+    # Most generic definitions for ioctl for Linux
+    # https://github.com/torvalds/linux/blob/b6839ef26e549de68c10359d45163b0cfb031183/tools/include/uapi/asm-generic/ioctls.h
 
-const TIOCSTI = 7 # simulate terminal input
-const TIOCSBRK = 8 # set   break bit
-const TIOCCBRK = 9 # clear break bit
-const TIOCSDTR = 10 # set   data terminal ready
-const TIOCCDTR = 11 # clear data terminal ready
-const TIOCGPGRP = 12 # get pgrp of tty
-const TIOCSPGRP = 13 # set pgrp of tty
+    const TCGETS = 0x5401
+    const TCSETS = 0x5402
+    const TCSETSW = 0x5403
+    const TCSETSF = 0x5404
+    const TCGETA = 0x5405
+    const TCSETA = 0x5406
+    const TCSETAW = 0x5407
+    const TCSETAF = 0x5408
+    const TCSBRK = 0x5409
+    const TCXONC = 0x540A
+    const TCFLSH = 0x540B
+    const TIOCEXCL = 0x540C
+    const TIOCNXCL = 0x540D
+    const TIOCSCTTY = 0x540E
+    const TIOCGPGRP = 0x540F
+    const TIOCSPGRP = 0x5410
+    const TIOCOUTQ = 0x5411
+    const TIOCSTI = 0x5412
+    const TIOCGWINSZ = 0x5413
+    const TIOCSWINSZ = 0x5414
+    const TIOCMGET = 0x5415
+    const TIOCMBIS = 0x5416
+    const TIOCMBIC = 0x5417
+    const TIOCMSET = 0x5418
+    const TIOCGSOFTCAR = 0x5419
+    const TIOCSSOFTCAR = 0x541A
+    const FIONREAD = 0x541B
+    const TIOCINQ = FIONREAD
+    const TIOCLINUX = 0x541C
+    const TIOCCONS = 0x541D
+    const TIOCGSERIAL = 0x541E
+    const TIOCSSERIAL = 0x541F
+    const TIOCPKT = 0x5420
+    const FIONBIO = 0x5421
+    const TIOCNOTTY = 0x5422
+    const TIOCSETD = 0x5423
+    const TIOCGETD = 0x5424
+    const TCSBRKP = 0x5425 # /* Needed for POSIX tcsendbreak() */
+    const TIOCSBRK = 0x5427   # /* BSD compatibility */
+    const TIOCCBRK = 0x5428   # /* BSD compatibility */
+    const TIOCGSID = 0x5429   # /* Return the session ID of FD */
+    const TIOCGRS485 = 0x542E
+    const TIOCSRS485 = 0x542F
+    const TIOCGPTN = 0 # TODO  # /* Get Pty Number (of pty-mux device) */
+    const TIOCSPTLCK = 0 # TODO   # /* Lock/unlock Pty */
+    const TIOCGDEV = 0 # TODO  # /* Get primary device node of /dev/console */
+    const TCGETX = 0x5432  # /* SYS5 TCGETX compatibility */
+    const TCSETX = 0x5433
+    const TCSETXF = 0x5434
+    const TCSETXW = 0x5435
+    const TIOCSIG = 0 # TODO   # /* pty: generate signal */
+    const TIOCVHANGUP = 0x5437
+    const TIOCGPKT = 0 # TODO  # /* Get packet mode state */
+    const TIOCGPTLCK = 0 # TODO  # /* Get Pty lock state */
+    const TIOCGEXCL = 0 # TODO  # /* Get exclusive mode state */
+    const TIOCGPTPEER = 0 # TODO  # /* Safely open the slave */
+    const TIOCGISO7816 = 0 # TODO
+    const TIOCSISO7816 = 0 # TODO
+
+    const FIONCLEX = 0x5450
+    const FIOCLEX = 0x5451
+    const FIOASYNC = 0x5452
+    const TIOCSERCONFIG = 0x5453
+    const TIOCSERGWILD = 0x5454
+    const TIOCSERSWILD = 0x5455
+    const TIOCGLCKTRMIOS = 0x5456
+    const TIOCSLCKTRMIOS = 0x5457
+    const TIOCSERGSTRUCT = 0x5458  # /* For debugging only */
+    const TIOCSERGETLSR =  0x5459  # /* Get line status register */
+    const TIOCSERGETMULTI = 0x545A  # /* Get multiport config  */
+    const TIOCSERSETMULTI = 0x545B  # /* Set multiport config */
+
+    const TIOCMIWAIT = 0x545C # /* wait for a change on serial input line(s) */
+    const TIOCGICOUNT = 0x545D # /* read serial port inline interrupt counts */
+    const TIOCPKT_DATA =  0
+    const TIOCPKT_FLUSHREAD =  1
+    const TIOCPKT_FLUSHWRITE =  2
+    const TIOCPKT_STOP =  4
+    const TIOCPKT_START =  8
+    const TIOCPKT_NOSTOP = 16
+    const TIOCPKT_DOSTOP = 32
+    const TIOCPKT_IOCTL = 64
+
+    const TIOCSER_TEMT = 0x01 # /* Transmitter physically empty */
+
+else
+
+    # MACOS
+    const TIOCGETP = Sys.islinux() ? 0 : 1074164744 # Get parameters -- V6/V7 gtty()
+    const TIOCSETP = Sys.islinux() ? 1 : -2147060727 # Set parameters -- V6/V7 stty()
+
+    const TIOCSETN = 2 # V7:   as above, but no flushtty
+    const TIOCEXCL = 3 # V7: set exclusive use of tty
+    const TIOCNXCL = 4 # V7: reset excl. use of tty
+    const TIOCHPCL = 5 # V7: hang up on last close
+    const TIOCFLUSH = 6 # V7: flush buffers
+
+    const TIOCSTI = 7 # simulate terminal input
+    const TIOCSBRK = 8 # set   break bit
+    const TIOCCBRK = 9 # clear break bit
+    const TIOCSDTR = 10 # set   data terminal ready
+    const TIOCCDTR = 11 # clear data terminal ready
+    const TIOCGPGRP = 12 # get pgrp of tty
+    const TIOCSPGRP = 13 # set pgrp of tty
+
+    const TCGETP = 1076130901
+    const TCGETA = 1075082331
+    const TCSETAW = -2146143143
+
+    const FIONREAD = 22 # get # bytes to read
+
+    const TIOCGETD = 23 # Get line discipline
+    const TIOCSETD = 24 # Set line discipline
+
+    const TIOCGWINSZ = 1074295912 # Get window size info
+    const TIOCSWINSZ = 26 # Set window size info (maybe gen SIGWINCH)
+
+end
+
+# TODO: check that these values make sense
+
 const TIOCGETC = Sys.islinux() ? 14 : 1074164754 # get special characters
 const TIOCSETC = Sys.islinux() ? 15 : -2147060719 # set special characters
 const TIOCLBIS = Sys.islinux() ? 16 : 0x8004747f # set   bits in local mode word
@@ -24,18 +134,6 @@ const TIOCLGET = Sys.islinux() ? 18 : 0x8004747c # get local mode mask
 const TIOCLSET = Sys.islinux() ? 19 : 0x8004747d # set local mode mask
 const TIOCSLTC = Sys.islinux() ? 20 : -2147060619 # set local special chars
 const TIOCGLTC = Sys.islinux() ? 21 : 1074164852 # get local special chars
-
-const TCGETP = 1076130901
-const TCGETA = 1075082331
-const TCSETAW = -2146143143
-
-const FIONREAD = 22 # get # bytes to read
-
-const TIOCGETD = 23 # Get line discipline
-const TIOCSETD = 24 # Set line discipline
-
-const TIOCGWINSZ = Sys.islinux() ? 25 : 1074295912 # Get window size info
-const TIOCSWINSZ = 26 # Set window size info (maybe gen SIGWINCH)
 
 const ALLDELAY =0177400 # Delay algorithm selection
 const BSDELAY = 0100000 # Select backspace delays
