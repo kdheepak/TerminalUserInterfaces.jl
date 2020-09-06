@@ -221,7 +221,7 @@ function ioctl(fd::RawFD, parameter::Int)
     r == -1 ? error("ioctl failed: $(Base.Libc.strerror())") : nothing
     return ws[]
 end
-ioctl(s::Base.LibuvStream, parameter) = ioctl(_file_handle(s), parameter)
+ioctl(s::Base.LibuvStream, parameter) = ioctl(_file_handle(s), Int(parameter))
 ioctl(f::Int, parameter) = ioctl(RawFD(f), parameter)
 
 end
