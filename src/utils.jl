@@ -10,7 +10,11 @@ function terminal_size(io)
     # width, height
     return (Int(ws.ws_col), Int(ws.ws_row))
 end
-terminal_size() = terminal_size(stdout)
+
+function terminal_size()
+    ds = displaysize(stdout)
+    return (last(ds), first(ds))
+end
 
 terminal_size(io, coord::Int) = terminal_size(io)[coord]
 terminal_size(coord::Int) = terminal_size(stdout, coord)
