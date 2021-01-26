@@ -1,6 +1,4 @@
 
-
-
 <!doctype html>
 <html lang="en" class="no-js">
   <head>
@@ -12,8 +10,9 @@
       
         <meta name="author" content="Dheepak Krishnamurthy">
       
+      
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.5.12">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.6">
     
     
       
@@ -21,14 +20,18 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.4dd2dd8d.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.cb6bc1d0.min.css">
       
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        
       
     
     
     
       
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
       
@@ -44,7 +47,13 @@
   </head>
   
   
-    <body dir="ltr">
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+      
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -62,7 +71,9 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+      
+
+<header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid" aria-label="Header">
     <a href=".." title="TerminalUserInterfaces.jl" class="md-header-nav__button md-logo" aria-label="TerminalUserInterfaces.jl">
       
@@ -74,18 +85,20 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
     </label>
     <div class="md-header-nav__title" data-md-component="header-title">
-      
-        <div class="md-header-nav__ellipsis">
-          <span class="md-header-nav__topic md-ellipsis">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             TerminalUserInterfaces.jl
           </span>
-          <span class="md-header-nav__topic md-ellipsis">
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
             
               Usage
             
           </span>
         </div>
-      
+      </div>
     </div>
     
       <label class="md-header-nav__button md-icon" for="__search">
@@ -96,7 +109,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
@@ -137,8 +150,6 @@
     
     <div class="md-container" data-md-component="container">
       
-        
-      
       
         
       
@@ -146,10 +157,16 @@
         <div class="md-main__inner md-grid">
           
             
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
-                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="TerminalUserInterfaces.jl" class="md-nav__button md-logo" aria-label="TerminalUserInterfaces.jl">
       
@@ -179,12 +196,15 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href=".." title="Home" class="md-nav__link">
-      Home
-    </a>
-  </li>
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
 
     
       
@@ -192,25 +212,27 @@
       
 
   
-
-
-  <li class="md-nav__item md-nav__item--active">
+  
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
       
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Usage
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         Usage
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="./" title="Usage" class="md-nav__link md-nav__link--active">
-      Usage
-    </a>
-    
+      </a>
       
+        
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -267,20 +289,24 @@
     </ul>
   
 </nav>
-    
-  </li>
+      
+    </li>
+  
 
     
       
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../api/" title="API" class="md-nav__link">
-      API
-    </a>
-  </li>
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        API
+      </a>
+    </li>
+  
 
     
   </ul>
@@ -290,7 +316,8 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -364,16 +391,12 @@
                   </a>
                 
                 
-                  
-                
-                
                 <p><a id='Usage'></a></p>
 <p><a id='Usage-1'></a></p>
 <h1 id="usage">Usage</h1>
 <p>To use it in Julia, first add it:</p>
 <div class="codehilite"><pre><span></span><code><span class="err">(v1.1)&gt; add TerminalUserInterfaces</span>
 </code></pre></div>
-
 
 <p>To build a Terminal User Interface (TUI), you'll need a main loop. <code>TerminalUserInterfaces.jl</code> is a library based on the immediate mode rendering concept. Every iteration of the main loop, the User Interface is "drawn" from scratch. This means writing out text to the screen every frame.</p>
 <p>While this may appear to be a limitation from a performance perspective, in practice it works well with stateful UI. Also to increase performance, <code>TerminalUserInterfaces.jl</code> maintains two buffers and draws only the difference between frames.</p>
@@ -385,7 +408,6 @@
 <span class="err">       TUI.get_event(t)       TUI.flush(t)</span>
 </code></pre></div>
 
-
 <p><a id='Example'></a></p>
 <p><a id='Example-1'></a></p>
 <h2 id="example">Example</h2>
@@ -393,14 +415,12 @@
 <span class="kd">const</span> <span class="n">TUI</span> <span class="o">=</span> <span class="n">TerminalUserInterfaces</span>
 </code></pre></div>
 
-
 <p><a id='Initialize'></a></p>
 <p><a id='Initialize-1'></a></p>
 <h3 id="initialize">Initialize</h3>
 <p>To create a TUI, the first thing you need to do is call <code>initialize</code></p>
 <div class="codehilite"><pre><span></span><code><span class="n">TUI</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
 </code></pre></div>
-
 
 <p>This function does a few things:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">backup_termios</span><span class="p">()</span>
@@ -410,7 +430,6 @@
 <span class="n">clear_screen</span><span class="p">()</span>
 <span class="n">move_cursor_home</span><span class="p">()</span>
 </code></pre></div>
-
 
 <ul>
 <li><code>backup_termios()</code>: backups termios settings to recover back to default terminal settings</li>
@@ -428,11 +447,9 @@
 <span class="n">default_mode</span><span class="p">()</span>
 </code></pre></div>
 
-
 <p>After calling <code>initialize</code>, we can create the application. To start, let's create an instance of <code>Terminal</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">t</span> <span class="o">=</span> <span class="n">TUI</span><span class="o">.</span><span class="n">Terminal</span><span class="p">()</span>
 </code></pre></div>
-
 
 <p>This holds references to the frame buffers and allows us to call helper functions to create a TUI.</p>
 <p><a id='Draw-Widgets'></a></p>
@@ -451,7 +468,6 @@
 <span class="n">TUI</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">rect</span><span class="p">)</span>
 </code></pre></div>
 
-
 <p><code>TUI.draw(t, widget, rect)</code> calls <code>draw(list::SelectableList, area::Rect, buf::Buffer)</code> which implements how to draw the widget. The <code>Buffer</code> is a <code>Matrix{Cell}</code> where <code>Cell</code> contains a julia <code>Char</code> and information on how to style it.</p>
 <div class="codehilite"><pre><span></span><code><span class="k">struct</span> <span class="n">Cell</span>
     <span class="n">char</span><span class="o">::</span><span class="kt">Char</span>
@@ -459,13 +475,11 @@
 <span class="k">end</span>
 </code></pre></div>
 
-
 <p>This is useful to know when implementing your own widgets.</p>
 <p>You can draw as many widgets as you want. If widgets are drawn at the same location, they will overwrite the <code>Cell</code> characters in the <code>Buffer</code>.</p>
 <p>Finally, calling <code>TUI.flush(t)</code> draws the current frame to the terminal.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">TUI</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
-
 
 <p><a id='Getting-user-input'></a></p>
 <p><a id='Getting-user-input-1'></a></p>
@@ -478,7 +492,6 @@
     <span class="k">end</span>
 <span class="k">end</span>
 </code></pre></div>
-
 
 <p>This function is non-blocking. You can also call <code>take!(t.stdin_channel)</code> to block till the user presses a key.</p>
 <p>Drawing, taking user input and acting on it and redrawing is what your main loop of the terminal user interface will look like.</p>
@@ -494,7 +507,6 @@
 <span class="w">        </span><span class="k">break</span><span class="w"></span>
 <span class="w">    </span><span class="k">end</span><span class="w"></span>
 </code></pre></div>
-
 
 <p><a id='Minimum-Working-Example'></a></p>
 <p><a id='Minimum-Working-Example-1'></a></p>
@@ -585,7 +597,6 @@
 <span class="n">main</span><span class="p">()</span>
 </code></pre></div>
 
-
 <p>There are more examples in the repository. See implementations of widgets for how to create your own widgets to work in <code>TerminalUserInterfaces.jl</code>.</p>
                 
               
@@ -605,7 +616,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href=".." title="Home" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href=".." class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -620,7 +631,7 @@
           </a>
         
         
-          <a href="../api/" title="API" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../api/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
@@ -653,15 +664,15 @@
       
     </div>
     
-      <script src="../assets/javascripts/vendor.3636a4ec.min.js"></script>
-      <script src="../assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      <script src="../assets/javascripts/vendor.53cc9318.min.js"></script>
+      <script src="../assets/javascripts/bundle.e9c9f54f.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
       
       <script>
         app = initialize({
           base: "..",
           features: [],
           search: Object.assign({
-            worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
+            worker: "../assets/javascripts/worker/search.9c0e82ba.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
