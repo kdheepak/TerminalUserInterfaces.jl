@@ -1,9 +1,10 @@
 Base.@kwdef struct ProgressBar
     block::Block
     ratio::Float64
-    function ProgressBar(block, ratio)
+    crayon::Crayon
+    function ProgressBar(block, ratio, crayon = Crayon(foreground = :white, background = :black))
         ( ratio < 0 || ratio > 1 ) && error("Got $ratio. ProgressBar ratio must be in [0, 1].")
-        new(block, ratio)
+        new(block, ratio, crayon)
     end
 end
 
@@ -14,14 +15,12 @@ function draw(pg::ProgressBar, rect::Rect, buf::Buffer)
 
     center = height(inner_area) ÷ 2 + top(inner_area)
 
-    crayon = Crayon(foreground = :white, background = :black)
-
     for y in top(inner_area):bottom(inner_area)
         for x in left(inner_area):right(inner_area)
             if x <= pg.ratio * (right(inner_area) - left(inner_area) + 1)
-                set(buf, x, y, crayon)
+                set(buf, x, y, pg.crayon)
             else
-                set(buf, x, y, inv(crayon))
+                set(buf, x, y, inv(pg.crayon))
             end
         end
     end
