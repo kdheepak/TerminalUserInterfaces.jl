@@ -30,4 +30,8 @@ include("widgets/list.jl")
 include("widgets/barchart.jl")
 include("widgets/grid.jl")
 
+function __init__()
+    backup_termios()
+end
+
 end # module
