@@ -1,34 +1,39 @@
 # This file is machine-generated - editing it directly is not advised
 
-[[Base64]]
+manifest_format = "2.0"
+
+[[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
-[[Crayons]]
-git-tree-sha1 = "c437a9c2114c7ba19322712e58942b383ffbd6c0"
+[[deps.Crayons]]
+git-tree-sha1 = "3f71217b538d7aaee0b69ab47d9b7724ca8afa0d"
 uuid = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
-version = "4.0.3"
+version = "4.0.4"
 
-[[InteractiveUtils]]
+[[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[Markdown]]
+[[deps.Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
-[[REPL]]
-deps = ["InteractiveUtils", "Markdown", "Sockets"]
+[[deps.REPL]]
+deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
-[[Sockets]]
+[[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
-[[TERMIOS]]
-git-tree-sha1 = "fc1726471235dff92e306e3e556edd2237d9cc8c"
+[[deps.TERMIOS]]
+git-tree-sha1 = "b34071a98b5bdb92ce7694071c7b3dee9464c964"
 uuid = "10233e3b-0d6c-416a-8c1a-d3d286bd6cd2"
-version = "0.2.0"
+version = "0.2.1"
 
-[[TextWrap]]
+[[deps.TextWrap]]
 git-tree-sha1 = "9250ef9b01b66667380cf3275b3f7488d0e25faf"
 uuid = "b718987f-49a8-5099-9789-dcd902bef87d"
 version = "1.0.1"
+
+[[deps.Unicode]]
+uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
