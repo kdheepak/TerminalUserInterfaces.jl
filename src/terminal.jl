@@ -14,6 +14,7 @@ struct Terminal
     kind::String
     wait::Float64
     ispaused::Ref{Bool}
+    isclosed::Ref{Bool}
     function Terminal(stdout_io = stdout, stdin_io = stdin)
         width, height = terminal_size()
         rect = Rect(1, 1, width, height)
@@ -23,14 +24,15 @@ struct Terminal
         stdout_channel = Channel{String}(Inf)
         stdin_channel = Channel{Char}(Inf)
         ispaused = Ref{Bool}(false)
-        stdout_task = @async while true
+        isclosed = Ref{Bool}(false)
+        stdout_task = @async while !isclosed[]
             if ispaused[] == true
                 sleep(1)
                 continue
             end
             print(stdout_io, take!(stdout_channel))
         end
-        stdin_task = @async while true
+        stdin_task = @async while !isclosed[]
             if ispaused[] == true
                 sleep(1)
                 continue
@@ -38,10 +40,15 @@ struct Terminal
             c = Char(read(stdin_io, 1)[])
             put!(stdin_channel, c)
         end
-        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000, ispaused)
+        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
         TERMINAL[] = t
         return t
     end
+end
+
+function close(t::Terminal)
+    t.isclosed[] = true
+    t.ispaused[] = false
 end
 
 """
