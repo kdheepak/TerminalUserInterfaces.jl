@@ -27,18 +27,21 @@ struct Terminal
         isclosed = Ref{Bool}(false)
         stdout_task = @async while !isclosed[]
             if ispaused[] == true
-                sleep(1)
+                sleep(0.01)
                 continue
             end
             print(stdout_io, take!(stdout_channel))
         end
-        stdin_task = @async while !isclosed[]
-            if ispaused[] == true
-                sleep(1)
-                continue
+        stdin_task = @async begin
+            Base.start_reading(stdin)
+            while !isclosed[]
+                if !ispaused[] && bytesavailable(stdin) > 0
+                    c = Char(read(stdin_io, 1)[])
+                    put!(stdin_channel, c)
+                else
+                    sleep(0.01)
+                end
             end
-            c = Char(read(stdin_io, 1)[])
-            put!(stdin_channel, c)
         end
         t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
         TERMINAL[] = t
