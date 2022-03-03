@@ -51,7 +51,7 @@ end
 
 function close(t::Terminal)
     t.isclosed[] = true
-    t.ispaused[] = false
+    t.ispaused[] = true
 end
 
 """
