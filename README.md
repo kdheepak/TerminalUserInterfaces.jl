@@ -28,3 +28,4 @@ Check out my JuliaCon talk where I use this package to make a presentation in th
 - [blessed-contrib](https://github.com/yaronn/blessed-contrib)
 - [tui-rs](https://github.com/fdehau/tui-rs)
 - [TextUserInterfaces.jl](https://github.com/ronisbr/TextUserInterfaces.jl/)
+- [Term.jl](https://github.com/FedeClaudi/Term.jl)
