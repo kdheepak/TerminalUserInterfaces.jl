@@ -39,6 +39,10 @@ function main()
 
       c = TUI.get_event(t)
 
+      @show c
+
+      sleep(5)
+
       break
 
       if count < 1
@@ -47,8 +51,13 @@ function main()
 
     end
   end
-
 end
 
 
-main()
+try
+  main()
+catch err
+  TUI.cleanup()
+  throw(err)
+end
+

@@ -4,92 +4,62 @@ import Base.print
 Terminal
 """
 struct Terminal
-    buffers::Vector{Buffer}
-    current::Ref{UInt8}
-    cursor_hidden::Ref{Bool}
-    terminal_size::Ref{Rect}
-    keyboard_buffer::Vector{Char}
-    stdout_channel::Channel{String}
-    stdin_channel::Channel{Char}
-    kind::String
-    wait::Float64
-    ispaused::Ref{Bool}
-    isclosed::Ref{Bool}
-    function Terminal(stdout_io=stdout, stdin_io=stdin)
-        (; x, y) = Crossterm.size()
-        rect = Rect(1, 1, x, y)
-        buffers = [Buffer(rect), Buffer(rect)]
-        current = 1
-        cursor_hidden = false
-        stdout_channel = Channel{String}(Inf)
-        stdin_channel = Channel{Char}(Inf)
-        ispaused = Ref{Bool}(false)
-        isclosed = Ref{Bool}(false)
-        stdout_task = @async while !isclosed[]
-            if ispaused[] == true
-                sleep(0.01)
-                continue
-            end
-            print(stdout_io, take!(stdout_channel))
-        end
-        stdin_task = @async begin
-            Base.start_reading(stdin)
-            while !isclosed[]
-                if !ispaused[] && bytesavailable(stdin) > 0
-                    c = Char(read(stdin_io, 1)[])
-                    put!(stdin_channel, c)
-                else
-                    sleep(0.01)
-                end
-            end
-        end
-        t = new(buffers, current, cursor_hidden, rect, Char[], stdout_channel, stdin_channel, get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
-        TERMINAL[] = t
-        return t
-    end
+  buffers::Vector{Buffer}
+  current::Ref{UInt8}
+  cursor_hidden::Ref{Bool}
+  terminal_size::Ref{Rect}
+  keyboard_buffer::Vector{Char}
+  kind::String
+  wait::Float64
+  ispaused::Ref{Bool}
+  isclosed::Ref{Bool}
+  function Terminal(stdout_io=stdout, stdin_io=stdin)
+    (; x, y) = Crossterm.size()
+    rect = Rect(1, 1, x, y)
+    buffers = [Buffer(rect), Buffer(rect)]
+    current = 1
+    cursor_hidden = false
+    ispaused = Ref{Bool}(false)
+    isclosed = Ref{Bool}(false)
+    t = new(buffers, current, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
+    TERMINAL[] = t
+    return t
+  end
 end
 
 function close(t::Terminal)
-    t.isclosed[] = true
-    t.ispaused[] = true
+  t.isclosed[] = true
+  t.ispaused[] = true
 end
 
 """
-Get key press
+Get event
+"""
+function try_get_event(t)
+  if Crossterm.poll(0.25)
+    Crossterm.read()
+  else
+    nothing
+  end
+end
+
+"""
+Get event
 """
 function get_event(t)
-    return if isready(t.stdin_channel)
-        take!(t.stdin_channel)
-    else
-        nothing
-    end
+  Crossterm.read()
 end
-
-function update_channel(t, args...)
-    for arg in args
-        update_channel(t, string(arg))
-    end
-end
-update_channel(t, arg) = update_channel(t, string(arg))
-update_channel(t, arg::String) = put!(t.stdout_channel, arg)
 
 const TERMINAL = Ref{Terminal}()
 
 """
 Flush terminal contents
 """
-function flush(t::Terminal, diff=true)
-    previous_buffer = t.buffers[END-t.current[]]
-    current_buffer = t.buffers[t.current[]]
-    if diff
-        draw(t, previous_buffer, current_buffer)
-    else
-        draw(t, current_buffer)
-    end
-    while isready(t.stdout_channel)
-        sleep(1e-6)
-    end
-    update(t)
+function flush(t::Terminal)
+  previous_buffer = t.buffers[END-t.current[]]
+  current_buffer = t.buffers[t.current[]]
+  draw(t, previous_buffer, current_buffer)
+  update(t)
 end
 
 """
@@ -218,95 +188,83 @@ const END = 2 + 1
 Update terminal
 """
 function update(t::Terminal)
-    reset(t.buffers[END-t.current[]])
-    t.current[] = END - t.current[]
-    (x, y) = Crossterm.size()
-    if t.terminal_size[].width != x || t.terminal_size[].height != y
-        resize(t, x, y)
-        clear_screen(t)
-        move_cursor_home(t)
-        # TODO: we need to redraw here.
-    end
-end
-
-"""
-Draw terminal
-"""
-function draw(t::Terminal, buffer::Buffer)
-    save_cursor(t)
+  reset(t.buffers[END-t.current[]])
+  t.current[] = END - t.current[]
+  (x, y) = Crossterm.size()
+  if t.terminal_size[].width != x || t.terminal_size[].height != y
+    resize(t, x, y)
+    clear_screen(t)
     move_cursor_home(t)
-    iob = IOBuffer()
-    for cell in permutedims(buffer.content)[:]
-        print(iob, cell.style, cell.char, inv(cell.style))
-    end
-    update_channel(t, String(take!(iob)))
-    restore_cursor(t)
-    while isready(t.stdout_channel)
-        sleep(1e-6)
-    end
-    update(t)
+  end
 end
 
 """
 Draw terminal
 """
 function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
-    save_cursor(t)
-    b1 = buffer1.content[:]
-    b2 = buffer2.content[:]
-    move_cursor_home(t)
-    R, C = size(buffer2.content)
-    for r = 1:R, c = 1:C
-        if buffer1.content[r, c] != buffer2.content[r, c]
-            move_cursor(t, r, c)
-            cell = buffer2.content[r, c]
-            update_channel(t, cell.style, cell.char, inv(cell.style))
-        end
+  save_cursor(t)
+  b1 = buffer1.content[:]
+  b2 = buffer2.content[:]
+  move_cursor_home(t)
+  R, C = size(buffer2.content)
+  for r = 1:R, c = 1:C
+    if buffer1.content[r, c] != buffer2.content[r, c]
+      move_cursor(t, r, c)
+      cell = buffer2.content[r, c]
+      for c in string(cell.style)
+        print(stdout, c)
+      end
+      print(stdout, cell.char)
+      for c in string(inv(cell.style))
+        print(stdout, c)
+      end
     end
-    restore_cursor(t)
+  end
+  restore_cursor(t)
+  Base.flush(stdout)
 end
 
 """
 Resize terminal
 """
 function resize(t::Terminal, w::Int, h::Int)
-    rect = Rect(1, 1, w, h)
-    t.terminal_size[] = rect
-    t.buffers[1] = Buffer(rect)
-    t.buffers[2] = Buffer(rect)
+  rect = Rect(1, 1, w, h)
+  t.terminal_size[] = rect
+  t.buffers[1] = Buffer(rect)
+  t.buffers[2] = Buffer(rect)
 end
 
 """
 Locate cursor
 """
 function locate_cursor(t::Terminal)
-    ucs = Char[]
-    while length(t.keyboard_buffer) > 0
-        push!(ucs, popfirst!(t.keyboard_buffer))
+  ucs = Char[]
+  while length(t.keyboard_buffer) > 0
+    push!(ucs, popfirst!(t.keyboard_buffer))
+  end
+  location = UInt8[]
+  with_raw_mode() do
+    print(stdout, LOCATECURSOR)
+    Base.flush(stdout)
+    total_read = 0
+    now = time()
+    c = 0x00
+    bell = UInt8(BELL)
+    channel = Channel(1)
+    t = @async begin
+      while c != UInt8('R')
+        c = read(stdin, 1)[]
+        push!(location, c)
+        total_read += 1
+      end
     end
-    location = UInt8[]
-    with_raw_mode() do
-        print(stdout, LOCATECURSOR)
-        Base.flush(stdout)
-        total_read = 0
-        now = time()
-        c = 0x00
-        bell = UInt8(BELL)
-        channel = Channel(1)
-        t = @async begin
-            while c != UInt8('R')
-                c = read(stdin, 1)[]
-                push!(location, c)
-                total_read += 1
-            end
-        end
-        while c != UInt8('R') && time() - now < CONTROL_SEQUENCE_TIMEOUT
-            sleep(1e-3)
-        end
-        if !istaskdone(t)
-            t.exception = InterruptException()
-        end
+    while c != UInt8('R') && time() - now < CONTROL_SEQUENCE_TIMEOUT
+      sleep(1e-3)
     end
-    row, col = split(String(Char.(location)[3:end-1]), ";")
-    return parse(Int, row), parse(Int, col)
+    if !istaskdone(t)
+      t.exception = InterruptException()
+    end
+  end
+  row, col = split(String(Char.(location)[3:end-1]), ";")
+  return parse(Int, row), parse(Int, col)
 end
