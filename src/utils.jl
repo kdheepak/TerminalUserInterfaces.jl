@@ -1,22 +1,25 @@
-function with_raw_mode(f::Function)
-    try
-        Crossterm.raw_mode(true)
-        f()
-    finally
-        Crossterm.raw_mode(false)
-    end
+function tui(f::Function)
+  try
+    tui(true)
+    f()
+  catch err
+    tui(false)
+    throw(err)
+  finally
+    tui(false)
+  end
 end
 
-function initialize()
-    Crossterm.alternate_screen()
-    Crossterm.hide()
-    Crossterm.raw_mode()
+function tui(switch = true)
+  if switch
+    Crossterm.alternate_screen(true)
+    Crossterm.cursor(false)
+    Crossterm.raw_mode(true)
     Crossterm.clear()
-end
-
-function cleanup()
+  else
     Crossterm.clear()
     Crossterm.raw_mode(false)
-    Crossterm.show()
+    Crossterm.cursor(true)
     Crossterm.alternate_screen(false)
+  end
 end

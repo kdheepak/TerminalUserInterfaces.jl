@@ -8,14 +8,9 @@ using TextWrap
 export Terminal
 
 include("utils.jl")
-
 include("symbols.jl")
-
 include("layout.jl")
 include("buffer.jl")
-
-include("events.jl")
-
 include("terminal.jl")
 
 include("widgets/widgets.jl")
