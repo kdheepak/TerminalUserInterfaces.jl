@@ -223,7 +223,7 @@ function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
     end
   end
   restore_cursor(t)
-  @ccall :libc.fflush(C_NULL::Ptr{Cvoid})::Cint
+  Base.flush(stdout)
 end
 
 """
