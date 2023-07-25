@@ -1,23 +1,18 @@
 module TerminalUserInterfaces
 
 using REPL: Terminals
-using TERMIOS
+using Crossterm
 using Crayons
 using TextWrap
 
 export Terminal
 
-include("ioctl.jl")
 include("utils.jl")
-
 include("symbols.jl")
-
 include("layout.jl")
 include("buffer.jl")
-
-include("events.jl")
-
 include("terminal.jl")
+include("event.jl")
 
 include("widgets/widgets.jl")
 
@@ -29,9 +24,5 @@ include("widgets/progressbar.jl")
 include("widgets/list.jl")
 include("widgets/barchart.jl")
 include("widgets/grid.jl")
-
-function __init__()
-    backup_termios()
-end
 
 end # module

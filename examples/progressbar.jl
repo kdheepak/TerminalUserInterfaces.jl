@@ -4,36 +4,31 @@ using REPL
 using InteractiveUtils
 
 function main(max_count)
-    TUI.initialize()
+  TUI.tui() do
 
     y, x = 1, 1
 
     counter = 1
     t = TUI.Terminal()
 
-    ADDITIVE = 1
-
     for _ in 1:max_count
 
-        w, _ = TUI.terminal_size()
+      w, h = TUI.size()
 
-        r = TUI.Rect(x, y + 1, w, 2)
+      r = TUI.Rect(x, y + 1, w, 2)
 
-        b = TUI.Block(border = TUI.BorderNone, border_type = TUI.BorderTypeHeavy)
-        pg = TUI.ProgressBar(b, counter / max_count)
+      b = TUI.Block(; border = TUI.BorderAll)
+      pg = TUI.ProgressBar(b, counter / max_count)
 
-        TUI.draw(t, pg, r)
+      TUI.draw(t, pg, r)
+      TUI.flush(t)
 
-        TUI.flush(t)
-
-        counter += 1
+      counter += 1
+      sleep(0.00001)
 
     end
-
-    println()
-
-    TUI.cleanup()
+  end
 
 end
 
-main(1000)
+main(100)
