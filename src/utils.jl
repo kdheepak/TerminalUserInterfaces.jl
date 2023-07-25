@@ -1,13 +1,15 @@
 function tui(f::Function)
+  r = nothing
   try
     tui(true)
-    f()
+    r = f()
   catch err
     tui(false)
     throw(err)
   finally
     tui(false)
   end
+  return r
 end
 
 function tui(switch = true)

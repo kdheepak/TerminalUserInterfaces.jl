@@ -9,14 +9,11 @@ function main()
     count = 1
     t = TUI.Terminal()
 
-    TUI.Crossterm.clear()
-    TUI.Crossterm.hide()
-
     while true
 
-      s = TUI.Crossterm.size()
+      w, h = TUI.size(t)
 
-      r = TUI.Rect(x, y, s.x ÷ 2, s.y ÷ 2)
+      r = TUI.Rect(x, y, w ÷ 2, h ÷ 2)
 
       b = TUI.Block(; title = "Bar Chart")
       p = TUI.BarChart(;
@@ -34,16 +31,15 @@ function main()
       )
 
       TUI.draw(t, p, r)
-
       TUI.flush(t)
 
       evt = TUI.get_event(t)
 
-      if evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "q"
+      if TUI.keycode(evt) == "q" && evt.data.kind == "Press"
         break
-      elseif evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "j"
+      elseif TUI.keycode(evt) == "j" && evt.data.kind == "Press"
         count += 1
-      elseif evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "k"
+      elseif TUI.keycode(evt) == "k" && evt.data.kind == "Press"
         count -= 1
       end
 

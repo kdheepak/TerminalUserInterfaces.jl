@@ -3,49 +3,47 @@ const TUI = TerminalUserInterfaces
 using Random
 
 function main()
-  TUI.initialize()
-  y, x = 1, 1
+  TUI.tui() do
+    y, x = 1, 1
 
-  count = 1
-  t = TUI.Terminal()
+    count = 1
+    t = TUI.Terminal()
 
-  TUI.clear_screen()
-  TUI.hide_cursor()
+    while true
 
-  while true
+      p = TUI.Grid(;
+        block = TUI.Block(; title = "Grid (Counter = $count)"),
+        data = [
+          1 2 3
+          4 5 6
+          7 8 9
+        ],
+        cell_height = 6,
+        cell_width = 6,
+      )
 
-    w, h = TUI.terminal_size()
+      w, h = TUI.size(t)
+      r = TUI.Rect(x, y, w, h)
 
-    p = TUI.Grid(; block = TUI.Block(; title = "Grid"), data = [
-      1 2 3
-      4 5 6
-      7 8 9
-    ], cell_height = 6, cell_width = 6)
+      TUI.draw(t, p, r)
+      TUI.flush(t)
 
-    r = TUI.Rect(x, y, w, h)
+      evt = TUI.get_event(t)
 
-    TUI.draw(t, p, r)
+      if TUI.keycode(evt) == "j" && evt.data.kind == "Press"
+        count += 1
+      elseif TUI.keycode(evt) == "k" && evt.data.kind == "Press"
+        count -= 1
+      elseif TUI.keycode(evt) == "q" && evt.data.kind == "Press"
+        break
+      end
 
-    TUI.flush(t)
+      if count < 1
+        count = 1
+      end
 
-    c = TUI.get_event(t)
-
-    if c == 'j'
-      count += 1
-    elseif c == 'k'
-      count -= 1
-    elseif c == 'q'
-      break
     end
-
-    if count < 1
-      count = 1
-    end
-
   end
-
-  TUI.cleanup()
-
 end
 
 

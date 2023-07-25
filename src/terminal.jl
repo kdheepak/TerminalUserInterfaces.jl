@@ -190,9 +190,9 @@ Update terminal
 function update(t::Terminal)
   reset(t.buffers[END-t.current[]])
   t.current[] = END - t.current[]
-  (x, y) = Crossterm.size()
-  if t.terminal_size[].width != x || t.terminal_size[].height != y
-    resize(t, x, y)
+  (w, h) = size(t)
+  if t.terminal_size[].width != w || t.terminal_size[].height != h
+    resize(t, w, h)
     clear_screen(t)
     move_cursor_home(t)
   end
@@ -211,8 +211,6 @@ Draw terminal
 """
 function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
   save_cursor(t)
-  b1 = buffer1.content[:]
-  b2 = buffer2.content[:]
   move_cursor_home(t)
   R, C = size(buffer2.content)
   for r in 1:R, c in 1:C
@@ -237,36 +235,9 @@ function resize(t::Terminal, w::Int, h::Int)
 end
 
 """
-Locate cursor
+Size of terminal as a tuple (width, height)
 """
-function locate_cursor(t::Terminal)
-  ucs = Char[]
-  while length(t.keyboard_buffer) > 0
-    push!(ucs, popfirst!(t.keyboard_buffer))
-  end
-  location = UInt8[]
-  with_raw_mode() do
-    print(stdout, LOCATECURSOR)
-    Base.flush(stdout)
-    total_read = 0
-    now = time()
-    c = 0x00
-    bell = UInt8(BELL)
-    channel = Channel(1)
-    t = @async begin
-      while c != UInt8('R')
-        c = read(stdin, 1)[]
-        push!(location, c)
-        total_read += 1
-      end
-    end
-    while c != UInt8('R') && time() - now < CONTROL_SEQUENCE_TIMEOUT
-      sleep(1e-3)
-    end
-    if !istaskdone(t)
-      t.exception = InterruptException()
-    end
-  end
-  row, col = split(String(Char.(location)[3:end-1]), ";")
-  return parse(Int, row), parse(Int, col)
+function size(t::Terminal)
+  (; x, y) = Crossterm.size()
+  (x, y)
 end

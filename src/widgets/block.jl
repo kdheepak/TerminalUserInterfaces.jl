@@ -1,5 +1,5 @@
 struct Border
-    val::UInt
+  val::UInt
 end
 
 Base.convert(::Type{Border}, val::Integer) = Border(val)
@@ -66,85 +66,85 @@ bottom_left(::BorderType{:ARC}) = BOX_DRAWINGS_LIGHT_ARC_UP_AND_RIGHT
 bottom_right(::BorderType{:ARC}) = BOX_DRAWINGS_LIGHT_ARC_UP_AND_LEFT
 
 Base.@kwdef struct Block
-    title::String = ""
-    title_style::Crayon = Crayon()
-    border::Border = Border(0b1111)
-    border_type::BorderType = BorderTypeLight
-    border_style::Crayon = Crayon()
+  title::String = ""
+  title_style::Crayon = Crayon()
+  border::Border = Border(0b1111)
+  border_type::BorderType = BorderTypeLight
+  border_style::Crayon = Crayon()
 end
 
 function draw(b::Block, area::Rect, buf::Buffer)
-    if b.border & BorderLeft > 0
-        x = left(area)
-        symbol = vertical(b.border_type)
-        for y in top(area):bottom(area)
-            set(buf, x, y, symbol, b.border_style)
-        end
+  if b.border & BorderLeft > 0
+    x = left(area)
+    symbol = vertical(b.border_type)
+    for y in top(area):bottom(area)
+      set(buf, x, y, symbol, b.border_style)
     end
-    if b.border & BorderTop > 0
-        y = top(area)
-        symbol = horizontal(b.border_type)
-        for x in left(area):right(area)
-            set(buf, x, y, symbol, b.border_style)
-        end
+  end
+  if b.border & BorderTop > 0
+    y = top(area)
+    symbol = horizontal(b.border_type)
+    for x in left(area):right(area)
+      set(buf, x, y, symbol, b.border_style)
     end
-    if b.border & BorderRight > 0
-        x = right(area)
-        symbol = vertical(b.border_type)
-        for y in top(area):bottom(area)
-            set(buf, x, y, symbol, b.border_style)
-        end
+  end
+  if b.border & BorderRight > 0
+    x = right(area)
+    symbol = vertical(b.border_type)
+    for y in top(area):bottom(area)
+      set(buf, x, y, symbol, b.border_style)
     end
-    if b.border & BorderBottom > 0
-        y = bottom(area)
-        symbol = horizontal(b.border_type)
-        for x in left(area):right(area)
-            set(buf, x, y, symbol, b.border_style)
-        end
+  end
+  if b.border & BorderBottom > 0
+    y = bottom(area)
+    symbol = horizontal(b.border_type)
+    for x in left(area):right(area)
+      set(buf, x, y, symbol, b.border_style)
     end
+  end
 
-    if b.border & BorderLeft > 0 && b.border & BorderTop > 0
-        set(buf, left(area), top(area), top_left(b.border_type), b.border_style)
-    end
-    if b.border & BorderRight > 0 && b.border & BorderTop > 0
-        set(buf, right(area), top(area), top_right(b.border_type), b.border_style)
-    end
-    if b.border & BorderLeft > 0 && b.border & BorderBottom > 0
-        set(buf, left(area), bottom(area), bottom_left(b.border_type), b.border_style)
-    end
-    if b.border & BorderRight > 0 && b.border & BorderBottom > 0
-        set(buf, right(area), bottom(area), bottom_right(b.border_type), b.border_style)
-    end
-    X = left(area)
-    W = min(width(area), size(buf.content, 2))
-    set(buf, X + 2, top(area), b.title, b.title_style)
+  if b.border & BorderLeft > 0 && b.border & BorderTop > 0
+    set(buf, left(area), top(area), top_left(b.border_type), b.border_style)
+  end
+  if b.border & BorderRight > 0 && b.border & BorderTop > 0
+    set(buf, right(area), top(area), top_right(b.border_type), b.border_style)
+  end
+  if b.border & BorderLeft > 0 && b.border & BorderBottom > 0
+    set(buf, left(area), bottom(area), bottom_left(b.border_type), b.border_style)
+  end
+  if b.border & BorderRight > 0 && b.border & BorderBottom > 0
+    set(buf, right(area), bottom(area), bottom_right(b.border_type), b.border_style)
+  end
+  X = left(area)
+  W = min(width(area), size(buf.content, 2))
+  set(buf, X + 2, top(area), b.title, b.title_style)
 end
 
 
 function inner(b::Block, area::Rect)
-    if width(area) < 2 || height(area) < 2
-        return Rect()
-    end
+  if width(area) < 2 || height(area) < 2
+    return Rect()
+  end
 
-    x = left(area)
-    y = top(area)
-    w = width(area)
-    h = height(area)
+  x = left(area)
+  y = top(area)
+  w = width(area)
+  h = height(area)
 
-    if b.border & BorderLeft > 0
-        x += 1;
-        w -= 1;
-    end
-    if b.border & BorderTop > 0
-        y += 1;
-        h -= 1;
-    end
-    if b.border & BorderRight > 0
-        w -= 1;
-    end
-    if b.border & BorderBottom > 0
-        h -= 1;
-    end
+  if b.border & BorderLeft > 0
+    x += 1
+    w -= 1
+  end
+  if b.border & BorderTop > 0
+    y += 1
+    h -= 1
+  end
+  if b.border & BorderRight > 0
+    w -= 1
+  end
+  if b.border & BorderBottom > 0
+    h -= 1
+  end
 
-    return Rect(x, y, w, h)
+  return Rect(x, y, w, h)
 end

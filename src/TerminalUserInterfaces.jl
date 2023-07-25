@@ -12,6 +12,7 @@ include("symbols.jl")
 include("layout.jl")
 include("buffer.jl")
 include("terminal.jl")
+include("event.jl")
 
 include("widgets/widgets.jl")
 
