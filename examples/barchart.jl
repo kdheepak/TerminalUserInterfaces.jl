@@ -37,13 +37,15 @@ function main()
 
       TUI.flush(t)
 
-      c = TUI.get_event(t)
+      evt = TUI.get_event(t)
 
-      @show c
-
-      sleep(5)
-
-      break
+      if evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "q"
+        break
+      elseif evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "j"
+        count += 1
+      elseif evt.tag == TUI.Crossterm.EventTag.KEY && evt.data.code == "k"
+        count -= 1
+      end
 
       if count < 1
         count = 1
@@ -54,10 +56,4 @@ function main()
 end
 
 
-try
-  main()
-catch err
-  TUI.cleanup()
-  throw(err)
-end
-
+main()

@@ -13,7 +13,7 @@ struct Terminal
   wait::Float64
   ispaused::Ref{Bool}
   isclosed::Ref{Bool}
-  function Terminal(stdout_io=stdout, stdin_io=stdin)
+  function Terminal()
     (; x, y) = Crossterm.size()
     rect = Rect(1, 1, x, y)
     buffers = [Buffer(rect), Buffer(rect)]
@@ -33,10 +33,10 @@ function close(t::Terminal)
 end
 
 """
-Get event
+Get event (nonblocking)
 """
-function try_get_event(t)
-  if Crossterm.poll(0.25)
+function try_get_event(t::Terminal; wait = t.wait)
+  if Crossterm.poll(wait)
     Crossterm.read()
   else
     nothing
@@ -44,9 +44,9 @@ function try_get_event(t)
 end
 
 """
-Get event
+Get event (blocking)
 """
-function get_event(t)
+function get_event(::Terminal)
   Crossterm.read()
 end
 
@@ -65,27 +65,27 @@ end
 """
 Move cursor
 """
-move_cursor(t::Terminal, row, col) = Crossterm.to(; x=col, y=row)
+move_cursor(t::Terminal, row, col) = Crossterm.to(; x = col, y = row)
 """
 Move cursor up
 """
-move_cursor_up(t::Terminal, row=1) = Crossterm.up(row)
+move_cursor_up(t::Terminal, row = 1) = Crossterm.up(row)
 """
 Move cursor down
 """
-move_cursor_down(t::Terminal, row=1) = Crossterm.down(row)
+move_cursor_down(t::Terminal, row = 1) = Crossterm.down(row)
 """
 Move cursor right
 """
-move_cursor_right(t::Terminal, col=1) = Crossterm.right(col)
+move_cursor_right(t::Terminal, col = 1) = Crossterm.right(col)
 """
 Move cursor left
 """
-move_cursor_left(t::Terminal, col=1) = Crossterm.left(col)
+move_cursor_left(t::Terminal, col = 1) = Crossterm.left(col)
 """
 Move cursor home
 """
-move_cursor_home(t::Terminal) = Crossterm.to(; x=0, y=0)
+move_cursor_home(t::Terminal) = Crossterm.to(; x = 0, y = 0)
 
 """
 Clear screen
@@ -198,6 +198,14 @@ function update(t::Terminal)
   end
 end
 
+putchar(c::Char) = print(stdout, c)
+putchar(s::String) = [putchar(c) for c in s]
+function putchar(cell::Cell)
+  putchar(string(cell.style))
+  putchar(cell.char)
+  putchar(string(inv(cell.style)))
+end
+
 """
 Draw terminal
 """
@@ -207,21 +215,15 @@ function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
   b2 = buffer2.content[:]
   move_cursor_home(t)
   R, C = size(buffer2.content)
-  for r = 1:R, c = 1:C
+  for r in 1:R, c in 1:C
     if buffer1.content[r, c] != buffer2.content[r, c]
       move_cursor(t, r, c)
       cell = buffer2.content[r, c]
-      for c in string(cell.style)
-        print(stdout, c)
-      end
-      print(stdout, cell.char)
-      for c in string(inv(cell.style))
-        print(stdout, c)
-      end
+      putchar(cell)
     end
   end
   restore_cursor(t)
-  Base.flush(stdout)
+  @ccall :libc.fflush(C_NULL::Ptr{Cvoid})::Cint
 end
 
 """
