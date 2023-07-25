@@ -14,7 +14,6 @@ This means writing out text to the screen every frame.
 While this may appear to be a limitation from a performance perspective, in practice it works well with stateful UI.
 Also to increase performance, `TerminalUserInterfaces.jl` maintains two buffers and draws only the difference between frames.
 
-
 ```
         START      TUI.draw.(t, w)    END
           *-------*-----*---*----*-----*
@@ -35,40 +34,51 @@ const TUI = TerminalUserInterfaces
 
 To create a TUI, the first thing you need to do is call `initialize`
 
-
 ```julia
-TUI.initialize()
+TUI.tui(true)
 ```
 
 This function does a few things:
 
 ```julia
-backup_termios()
-tui_mode()
-hide_cursor()
-enable_raw_mode()
-clear_screen()
-move_cursor_home()
+
 ```
 
-- `backup_termios()`: backups termios settings to recover back to default terminal settings
-- `tui_mode()`: starts an alternate buffer
-- `hide_cursor()`: makes cursor not visible
-- `enable_raw_mode()`: capture key presses as they happen without waiting for the enter key
-- `clear_screen()`: clear the screen of all text
-- `move_cursor_home()`: moves the cursor to the top left of the terminal window
+- `alternate_screen(true)`: starts an alternate buffer
+- `cursor(false)`: makes cursor not visible
+- `raw_mode(true)`: capture key presses as they happen without waiting for the enter key
+- `clear()`: clear the screen of all text
 
-Every `TUI.initialize()` at beginning of a program must be paired with `TUI.cleanup()` at the end of a program.
+Every `TUI.tui(true)` at beginning of a program must be paired with `TUI.tui(false)` at the end of a program.
 
 ```julia
-move_cursor_home()
-clear_screen()
-disable_raw_mode()
-show_cursor()
-default_mode()
+Crossterm.clear()
+Crossterm.raw_mode(false)
+Crossterm.cursor(true)
+Crossterm.alternate_screen(false)
 ```
 
-After calling `initialize`, we can create the application.
+The `TUI` package also provides a context `tui()` function that effectively does this:
+
+```julia
+function tui(f::Function)
+  try
+    tui(true)
+    f()
+  finally
+    tui(false)
+  end
+end
+```
+
+So you can use it like so:
+
+```julia
+TUI.tui() do
+  ...
+end
+```
+
 To start, let's create an instance of `Terminal`.
 
 ```julia
@@ -117,19 +127,11 @@ TUI.flush(t)
 
 ### Getting user input
 
-`TerminalUserInterfaces.jl` sets up `stdout` and `stdin` `Channel`s
+`TerminalUserInterfaces.jl` uses `Crossterm`'s `poll()` and `read()` functions
 
-Calling `TUI.get_event(t)` reads from the `stdin` `Channel`.
+Calling `TUI.get_event(t)` returns a `Crossterm.Event`.
 
-```julia
-function get_event(t)
-    if isready(t.stdin_channel)
-        return take!(t.stdin_channel)
-    end
-end
-```
-
-This function is non-blocking. You can also call `take!(t.stdin_channel)` to block till the user presses a key.
+This function is blocking. You can also call `TUI.try_get_event(t, duration = 1 #= seconds =#)` to non-block read().
 
 Drawing, taking user input and acting on it and redrawing is what your main loop of the terminal user interface will look like.
 
@@ -139,11 +141,11 @@ And if the user hits `\r`, we can pick the selection and break out of the main l
 ```
     c = TUI.get_event(t)
 
-    if c == 'j'
+    if TUI.keycode(c) == "j"
         selection += 1
-    elseif c == 'k'
+    elseif TUI.keycode(c) == "k"
         selection -= 1
-    elseif c == '\r'
+    elseif TUI.keycode(c) == "Enter"
         final = words[selection].text
         break
     end
@@ -159,30 +161,38 @@ const TUI = TerminalUserInterfaces
 using Random
 
 function main()
-    TUI.initialize()
+  final = TUI.tui() do
     y, x = 1, 1
 
     count = 1
     t = TUI.Terminal()
 
-    TUI.clear_screen()
-    TUI.hide_cursor()
-
     words = [
-        "Option A"
-        "Option B"
-        "Option C"
-        "Option D"
-        "Option E"
-        "Option F"
-        "Option G"
-        "Option H"
-        "Option I"
+      "Option A"
+      "Option B"
+      "Option C"
+      "Option D"
+      "Option E"
+      "Option F"
+      "Option G"
+      "Option H"
+      "Option I"
     ]
 
     rng = MersenneTwister()
     styles = [
-        TUI.Crayon()
+      # TUI.Crayon(bold = true)
+      # TUI.Crayon(italics = true)
+      # TUI.Crayon(foreground = :red)
+      # TUI.Crayon(foreground = :blue)
+      # TUI.Crayon(foreground = :green)
+      # TUI.Crayon(bold = true, foreground = :red)
+      # TUI.Crayon(bold = true, foreground = :blue)
+      # TUI.Crayon(bold = true, foreground = :green)
+      # TUI.Crayon(italics = true, foreground = :red)
+      # TUI.Crayon(italics = true, foreground = :blue)
+      # TUI.Crayon(italics = true, foreground = :green)
+      TUI.Crayon(),
     ]
 
     words = [TUI.Word(word, styles[rand(rng, 1:length(styles))]) for word in words]
@@ -193,48 +203,45 @@ function main()
 
     while true
 
-        w, _ = TUI.terminal_size()
+      w, h = TUI.size()
 
-        r = TUI.Rect(x, y, w ÷ 4, 20)
+      r = TUI.Rect(x, y, w ÷ 4, 20)
 
-        b = TUI.Block(title = "Option Picker")
-        p = TUI.SelectableList(
-            b,
-            words,
-            scroll,
-            selection,
-        )
+      b = TUI.Block(; title = "Option Picker")
+      p = TUI.SelectableList(b, words, scroll, selection)
 
-        TUI.draw(t, p, r)
+      TUI.draw(t, p, r)
 
-        TUI.flush(t)
+      TUI.flush(t)
 
-        count += 1
+      count += 1
 
-        c = TUI.get_event(t)
+      evt = TUI.get_event(t)
 
-        if c == 'j'
-            selection += 1
-        elseif c == 'k'
-            selection -= 1
-        elseif c == '\r'
-            final = words[selection].text
-            break
-        end
-        if selection < 1
-            selection = 1
-        end
-        if selection > length(words)
-            selection = length(words)
-        end
+      if TUI.keycode(evt) == "j" && evt.data.kind == "Press"
+        selection += 1
+      elseif TUI.keycode(evt) == "k" && evt.data.kind == "Press"
+        selection -= 1
+      elseif TUI.keycode(evt) == "q" && evt.data.kind == "Press"
+        break
+      elseif TUI.keycode(evt) == "Enter" && evt.data.kind == "Press"
+        final = words[selection].text
+        break
+      end
+      if selection < 1
+        selection = 1
+      end
+      if selection > length(words)
+        selection = length(words)
+      end
 
     end
+    final
+  end
 
-    TUI.cleanup()
-
-    println(final)
-
+  println(final)
 end
+
 
 main()
 ```
