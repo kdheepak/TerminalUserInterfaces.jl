@@ -15,9 +15,9 @@ struct Terminal
     wait::Float64
     ispaused::Ref{Bool}
     isclosed::Ref{Bool}
-    function Terminal(stdout_io = stdout, stdin_io = stdin)
-        width, height = terminal_size()
-        rect = Rect(1, 1, width, height)
+    function Terminal(stdout_io=stdout, stdin_io=stdin)
+        (; x, y) = Crossterm.size()
+        rect = Rect(1, 1, x, y)
         buffers = [Buffer(rect), Buffer(rect)]
         current = 1
         cursor_hidden = false
@@ -78,8 +78,8 @@ const TERMINAL = Ref{Terminal}()
 """
 Flush terminal contents
 """
-function flush(t::Terminal, diff = true)
-    previous_buffer = t.buffers[END - t.current[]]
+function flush(t::Terminal, diff=true)
+    previous_buffer = t.buffers[END-t.current[]]
     current_buffer = t.buffers[t.current[]]
     if diff
         draw(t, previous_buffer, current_buffer)
@@ -95,110 +95,111 @@ end
 """
 Move cursor
 """
-move_cursor(t::Terminal, row, col) = update_channel(t, Terminals.CSI, INDICES[row], ';', INDICES[col], 'H')
+move_cursor(t::Terminal, row, col) = Crossterm.to(; x=col, y=row)
 """
 Move cursor up
 """
-move_cursor_up(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'A')
+move_cursor_up(t::Terminal, row=1) = Crossterm.up(row)
 """
 Move cursor down
 """
-move_cursor_down(t::Terminal, row = 1) = update_channel(t, Terminals.CSI, INDICES[row], 'B')
+move_cursor_down(t::Terminal, row=1) = Crossterm.down(row)
 """
 Move cursor right
 """
-move_cursor_right(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'C')
+move_cursor_right(t::Terminal, col=1) = Crossterm.right(col)
 """
 Move cursor left
 """
-move_cursor_left(t::Terminal, col = 1) = update_channel(t, Terminals.CSI, INDICES[col], 'D')
+move_cursor_left(t::Terminal, col=1) = Crossterm.left(col)
 """
 Move cursor home
 """
-move_cursor_home(t::Terminal) = update_channel(t, HOMEPOSITION)
+move_cursor_home(t::Terminal) = Crossterm.to(; x=0, y=0)
 
 """
 Clear screen
 """
-clear_screen(t::Terminal) = update_channel(t, CLEARSCREEN)
+clear_screen(t::Terminal) = Crossterm.clear()
 """
 Clear screen from cursor up onwards
 """
-clear_screen_from_cursor_up(t::Terminal) = update_channel(t, CLEARBELOWCURSOR)
+clear_screen_from_cursor_up(t::Terminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_UP)
 """
 Clear screen from cursor down onwards
 """
-clear_screen_from_cursor_down(t::Terminal) = update_channel(t, CLEARABOVECURSOR)
+clear_screen_from_cursor_down(t::Terminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_DOWN)
 
 """
 Clear line
 """
-clear_line(t::Terminal) = update_channel(t, CLEARLINE)
+clear_line(t::Terminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
 """
 Clear line from cursor right onwards
 """
-clear_line_from_cursor_right(t::Terminal) = update_channel(t, CLEARAFTERCURSOR)
+clear_line_from_cursor_right(t::Terminal) = Crossterm.clear(Crossterm.ClearType.UNTIL_NEW_LINE)
 """
 Clear line from cursor left onwards
 """
-clear_line_from_cursor_left(t::Terminal) = update_channel(t, CLEARBEFORECURSOR)
+clear_line_from_cursor_left(t::Terminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
 
 """
 Hide cursor
 """
-hide_cursor(t::Terminal) = update_channel(t, HIDECURSOR)
+hide_cursor(t::Terminal) = Crossterm.hide()
 """
 Show cursor
 """
-show_cursor(t::Terminal) = update_channel(t, SHOWCURSOR)
+show_cursor(t::Terminal) = Crossterm.show()
 
 """
 Save cursor
 """
-save_cursor(t::Terminal) = update_channel(t, SAVECURSOR)
+save_cursor(t::Terminal) = Crossterm.save()
 """
 Restore cursor
 """
-restore_cursor(t::Terminal) = update_channel(t, RESTORECURSOR)
+restore_cursor(t::Terminal) = Crossterm.restore()
+
+"""
+Change cursor to default
+"""
+change_cursor_to_default(t::Terminal) = Crossterm.style(Crossterm.Style.DEFAULT_USER_SHAPE)
 
 """
 Change cursor to blinking block
 """
-change_cursor_to_blinking_block(t::Terminal) = update_channel(t, CURSORBLINKINGBLOCK)
+change_cursor_to_blinking_block(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_BLOCK)
+
 """
 Change cursor to steady block
 """
-change_cursor_to_steady_block(t::Terminal) = update_channel(t, CURSORSTEADYBLOCK)
+change_cursor_to_steady_block(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_BLOCK)
 """
 Change cursor to blinking underline
 """
-change_cursor_to_blinking_underline(t::Terminal) = update_channel(t, CURSORBLINKINGUNDERLINE)
+change_cursor_to_blinking_underline(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_UNDER_SCORE)
 """
 Change cursor to steady underline
 """
-change_cursor_to_steady_underline(t::Terminal) = update_channel(t, CURSORSTEADYUNDERLINE)
+change_cursor_to_steady_underline(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_UNDER_SCORE)
 """
 Change cursor to blinking ibeam
 """
-change_cursor_to_blinking_ibeam(t::Terminal) = update_channel(t, CURSORBLINKINGIBEAM)
+change_cursor_to_blinking_ibeam(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_BAR)
 """
 Change cursor to steady ibeam
 """
-change_cursor_to_steady_ibeam(t::Terminal) = update_channel(t, CURSORSTEADYIBEAM)
-
-"""
-Reset terminal settings
-"""
-reset(t::Terminal) = update_channel(t, RESET)
+change_cursor_to_steady_ibeam(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_BAR)
 
 """
 Alternate screen TUI mode
 """
-tui_mode(t::Terminal) = update_channel(t, TUIMODE)
+tui_mode(t::Terminal) = Crossterm.alternate_screen(true)
 """
 Default mode
 """
-default_mode(t::Terminal) = update_channel(t, DEFAULTMODE)
+default_mode(t::Terminal) = Crossterm.alternate_screen(false)
 
 """
 Get current buffer
@@ -211,15 +212,17 @@ Reset terminal
 """
 reset(t::Terminal, buffer::Int) = reset(t.buffers[buffer])
 
+const END = 2 + 1
+
 """
 Update terminal
 """
 function update(t::Terminal)
-    reset(t.buffers[END - t.current[]])
+    reset(t.buffers[END-t.current[]])
     t.current[] = END - t.current[]
-    w, h = terminal_size()
-    if t.terminal_size[].width != w || t.terminal_size[].height != h
-        resize(t, w, h)
+    (x, y) = Crossterm.size()
+    if t.terminal_size[].width != x || t.terminal_size[].height != y
+        resize(t, x, y)
         clear_screen(t)
         move_cursor_home(t)
         # TODO: we need to redraw here.
