@@ -13,9 +13,9 @@ function main(max_count)
 
     for _ in 1:max_count
 
-      w, h = TUI.size()
+      w, h = TUI.size(t)
 
-      r = TUI.Rect(x, y + 1, w, 2)
+      r = TUI.Rect(x, y + 1, w - 2, 2)
 
       b = TUI.Block(; border = TUI.BorderAll)
       pg = TUI.ProgressBar(b, counter / max_count)
@@ -24,7 +24,7 @@ function main(max_count)
       TUI.flush(t)
 
       counter += 1
-      sleep(0.00001)
+      sleep(0.1)
 
     end
   end

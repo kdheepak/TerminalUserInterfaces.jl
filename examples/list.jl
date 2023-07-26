@@ -45,7 +45,7 @@ function main()
 
     while true
 
-      w, h = TUI.size()
+      w, h = TUI.size(t)
 
       r = TUI.Rect(x, y, w ÷ 4, 20)
 

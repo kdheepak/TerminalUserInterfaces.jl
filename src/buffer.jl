@@ -34,8 +34,8 @@ function Buffer(lines::Vector{String})
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, style::Crayons.Crayon)
-  row = min(row, size(buffer.content, 1))
-  col = min(col, size(buffer.content, 2))
+  row = min(row, Base.size(buffer.content, 1))
+  col = min(col, Base.size(buffer.content, 2))
   buffer.content[row, col] = Cell(buffer.content[row, col].char, style)
 end
 
@@ -67,8 +67,8 @@ function set(buffer::Buffer, col::Integer, row::Integer, c::Char, style::Crayons
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, c::Cell)
-  row = min(row, size(buffer.content, 1))
-  col = min(col, size(buffer.content, 2))
+  row = min(row, Base.size(buffer.content, 1))
+  col = min(col, Base.size(buffer.content, 2))
   buffer.content[row, col] = c
 end
 
@@ -76,7 +76,7 @@ reset(buffer::Buffer) = fill!(buffer.content, Cell(' '))
 
 function diff(buffer1::Buffer, buffer2::Buffer)
   arr = Tuple{Tuple{Int,Int},Cell}[]
-  R, C = size(buffer1.content)
+  R, C = Base.size(buffer1.content)
   for c in 1:C
     for r in 1:R
       if buffer1.content[r, c] != buffer2.content[r, c]

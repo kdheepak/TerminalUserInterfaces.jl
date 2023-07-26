@@ -14,7 +14,7 @@ end
 function draw(grid::Grid, area::Rect, buf::Buffer)
   draw(grid.block, area, buf)
   grid_area = inner(grid.block, area)
-  nrows, ncols = size(grid.data)
+  nrows, ncols = Base.size(grid.data)
 
   ncols * grid.cell_width + 1 > width(grid_area) && return
   nrows * grid.cell_height + 1 > height(grid_area) && return

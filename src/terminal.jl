@@ -14,8 +14,8 @@ struct Terminal
   ispaused::Ref{Bool}
   isclosed::Ref{Bool}
   function Terminal()
-    (; x, y) = Crossterm.size()
-    rect = Rect(1, 1, x, y)
+    (; w, h) = Crossterm.size()
+    rect = Rect(1, 1, w, h)
     buffers = [Buffer(rect), Buffer(rect)]
     current = 1
     cursor_hidden = false
@@ -198,12 +198,12 @@ function update(t::Terminal)
   end
 end
 
-putchar(c::Char) = print(stdout, c)
-putchar(s::String) = [putchar(c) for c in s]
-function putchar(cell::Cell)
-  putchar(string(cell.style))
-  putchar(cell.char)
-  putchar(string(inv(cell.style)))
+put(c::Char) = Crossterm.print(string(c))
+put(s::String) = Crossterm.print(s)
+function put(cell::Cell)
+  put(string(cell.style))
+  put(cell.char)
+  put(string(inv(cell.style)))
 end
 
 """
@@ -212,16 +212,16 @@ Draw terminal
 function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
   save_cursor(t)
   move_cursor_home(t)
-  R, C = size(buffer2.content)
+  R, C = Base.size(buffer2.content)
   for r in 1:R, c in 1:C
     if buffer1.content[r, c] != buffer2.content[r, c]
       move_cursor(t, r, c)
       cell = buffer2.content[r, c]
-      putchar(cell)
+      put(cell)
     end
   end
   restore_cursor(t)
-  Base.flush(stdout)
+  Crossterm.flush()
 end
 
 """
@@ -238,6 +238,6 @@ end
 Size of terminal as a tuple (width, height)
 """
 function size(t::Terminal)
-  (; x, y) = Crossterm.size()
-  (x, y)
+  (; w, h) = Crossterm.size()
+  (w, h)
 end

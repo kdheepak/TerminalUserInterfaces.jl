@@ -116,7 +116,7 @@ function draw(b::Block, area::Rect, buf::Buffer)
     set(buf, right(area), bottom(area), bottom_right(b.border_type), b.border_style)
   end
   X = left(area)
-  W = min(width(area), size(buf.content, 2))
+  W = min(width(area), Base.size(buf.content, 2))
   set(buf, X + 2, top(area), b.title, b.title_style)
 end
 

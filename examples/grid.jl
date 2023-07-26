@@ -11,19 +11,14 @@ function main()
 
     while true
 
-      p = TUI.Grid(;
-        block = TUI.Block(; title = "Grid (Counter = $count)"),
-        data = [
-          1 2 3
-          4 5 6
-          7 8 9
-        ],
-        cell_height = 6,
-        cell_width = 6,
-      )
+      p = TUI.Grid(; block = TUI.Block(; title = "Grid"), data = [
+        1 2 3
+        4 5 6
+        7 8 9
+      ], cell_height = 6, cell_width = 6)
 
       w, h = TUI.size(t)
-      r = TUI.Rect(x, y, w, h)
+      r = TUI.Rect(x, y, w - 5, h - 5)
 
       TUI.draw(t, p, r)
       TUI.flush(t)

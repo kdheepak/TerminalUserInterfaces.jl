@@ -33,7 +33,7 @@ function main()
 
     while true
 
-      r = TUI.Rect(x, y, TUI.Crossterm.size().x, 35)
+      r = TUI.Rect(x, y, TUI.Crossterm.size().w, 35)
 
       b = TUI.Block(; title = "Paragraph example")
       p = TUI.Paragraph(b, words, scroll)

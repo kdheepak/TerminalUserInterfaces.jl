@@ -14,14 +14,15 @@ end
 
 function tui(switch = true)
   if switch
-    Crossterm.alternate_screen(true)
     Crossterm.cursor(false)
+    Crossterm.alternate_screen(true)
     Crossterm.raw_mode(true)
     Crossterm.clear()
   else
     Crossterm.clear()
     Crossterm.raw_mode(false)
-    Crossterm.cursor(true)
     Crossterm.alternate_screen(false)
+    Crossterm.cursor(true)
   end
+  Crossterm.flush()
 end

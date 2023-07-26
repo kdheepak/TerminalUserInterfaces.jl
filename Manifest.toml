@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.0"
+julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "f5419cf5e146f2fb3431997828937f7c43deeef4"
+project_hash = "a541d28cf89c899804c157e9c5da607fa81a8d71"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -17,9 +17,9 @@ version = "4.1.1"
 
 [[deps.Crossterm]]
 deps = ["Dates", "EnumX", "JSON3", "libcrossterm_jll"]
-git-tree-sha1 = "036596a0d6e050557d96b472b0eda3157c1f8563"
+git-tree-sha1 = "b54fd0f416b8f375ff0b2bf83cf0067070d53ba7"
 uuid = "89a1a94d-67fa-4c27-8677-ab6d33b1ad6c"
-version = "0.2.1"
+version = "0.3.1"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -121,6 +121,6 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
 [[deps.libcrossterm_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "501284ee0f9590bb3d42cf44b089d33e2a2dd475"
+git-tree-sha1 = "2444ae63ba15bf81a898b578b179c712913b6b93"
 uuid = "7fdd842c-1c35-5047-b6c4-5b8c94d478bc"
-version = "0.4.0+0"
+version = "0.6.0+0"
