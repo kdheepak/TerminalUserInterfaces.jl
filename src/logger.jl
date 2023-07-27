@@ -2,7 +2,6 @@ module Logger
 """
 A module for initializing a logging system.
 
-This module creates multiple loggers that write to different files and formats the log messages in a specific way.
 The log files are saved in a folder specified by the constant `LOG_FOLDER`.
 """
 
@@ -28,8 +27,7 @@ The logger formats the log messages in a specific way and includes the current d
 
 Kwargs:
 
-  - name (str): The name of the log file. Defaults to "info".
-  - exceptions (bool): Whether or not to print the exception in the log message. Defaults to `true`.
+  - log_folder (String): The name of the log folder. Default = `"TerminalUserInterfaces/log"`.
 
 Returns:
 
@@ -57,29 +55,17 @@ function file_logger(; log_folder)
   end
 end
 
+
 """
-A function to add the filename to log messages.
-
-This function takes a logger and returns a new logger that includes the filename of the log message in the log message.
-
-Args:
-
-  - logger (AbstractLogger): The logger to transform.
-
-Returns:
-
-  - TransformerLogger: A new logger that includes the filename of the log message in the log message.
+Change logger folder
 """
-function filename_logger(logger)
-  TransformerLogger(logger) do log
-    merge(log, (; message = "$(basename(log.file)) - $(log.message)"))
-  end
-end
-
 function folder(p)
   LOG_FOLDER[] = p
 end
 
+"""
+Change logger level
+"""
 function level(l)
   LOG_LEVEL[] = l
 end
