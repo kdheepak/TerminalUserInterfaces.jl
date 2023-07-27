@@ -201,7 +201,8 @@ function update(t::Terminal)
   end
 end
 
-put(c::Char) = Crossterm.print(string(c))
+put(c::SubString{String}) = Crossterm.print(string(c))
+put(c::Char) = Crossterm.print(c)
 put(s::String) = Crossterm.print(s)
 function put(cell::Cell)
   put(string(cell.style))

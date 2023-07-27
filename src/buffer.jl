@@ -1,6 +1,6 @@
 
-Base.@kwdef struct Cell
-  char::Char
+Base.@kwdef struct Cell{T}
+  char::T
   style::Crayons.Crayon
 end
 
@@ -47,15 +47,23 @@ function set(buffer::Buffer, col::Integer, row::Integer, lines::Vector{T}) where
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, line::String)
-  for (_col, c) in enumerate(line)
+  for (_col, c) in enumerate(graphemes(line))
     set(buffer, col + _col - 1, row, c)
   end
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, line::String, style::Crayons.Crayon)
-  for (_col, c) in enumerate(line)
+  for (_col, c) in enumerate(graphemes(line))
     set(buffer, col + _col - 1, row, c, style)
   end
+end
+
+function set(buffer::Buffer, col::Integer, row::Integer, c::SubString{String})
+  set(buffer, col, row, c, buffer.content[row, col].style)
+end
+
+function set(buffer::Buffer, col::Integer, row::Integer, c::SubString{String}, style::Crayons.Crayon)
+  set(buffer, col, row, Cell(c, style))
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, c::Char)

@@ -4,6 +4,7 @@ using REPL: Terminals
 using Crossterm
 using Crayons
 using TextWrap
+using Unicode
 
 export Terminal
 
