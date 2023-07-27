@@ -21,13 +21,14 @@ using Logging
 end
 
 function TUI.update!(m::Model, evt)
-  if TUI.keycode(evt) == "j" && evt.data.kind == "Press"
+  !isnothing(evt) && @info "Received event" evt
+  if TUI.keypress(evt) == "j"
     m.selection += 1
-  elseif TUI.keycode(evt) == "k" && evt.data.kind == "Press"
+  elseif TUI.keypress(evt) == "k"
     m.selection -= 1
-  elseif TUI.keycode(evt) == "q" && evt.data.kind == "Press"
+  elseif TUI.keypress(evt) == "q"
     m.quit = true
-  elseif TUI.keycode(evt) == "Enter" && evt.data.kind == "Press"
+  elseif TUI.keypress(evt) == "Enter"
     m.quit = true
   end
   if m.selection < 1

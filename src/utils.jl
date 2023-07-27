@@ -20,9 +20,9 @@ function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, f
     Crossterm.raw_mode(true)
     Crossterm.clear()
     mouse && Crossterm.mouse_capture(true)
-    enhance_keyboard && Crossterm.keyboard_enhancement_flags(true)
+    enhance_keyboard && Crossterm.enhance_keyboard(true)
   else
-    enhance_keyboard && Crossterm.keyboard_enhancement_flags(false)
+    enhance_keyboard && Crossterm.enhance_keyboard(false)
     mouse && Crossterm.mouse_capture(false)
     Crossterm.clear()
     Crossterm.raw_mode(false)

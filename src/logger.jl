@@ -39,12 +39,12 @@ function file_logger(; log_folder)
     # Use datetime in log messages in files
     date = Dates.format(now(), DATE_FORMAT)
     # pad level, filename and lineno so things look nice
-    level = rpad(args.level, 5, " ")
-    filename = lpad(basename(args.file), 10, " ")
-    lineno = rpad(args.line, 5, " ")
+    level = rpad(args.level, 1, " ")
+    filename = lpad(basename(args.file), 1, " ")
+    lineno = rpad(args.line, 1, " ")
     message = args.message
     # Write the formatted log message to the file
-    println(io, "$date | $level | $filename:$lineno - $message")
+    println(io, "$date | $level | $filename:$lineno - $message | $(args.kwargs...)")
     # If the log message includes an exception, print it explicitly
     if :exception ∈ keys(args.kwargs)
       e, stacktrace = args.kwargs[:exception]
