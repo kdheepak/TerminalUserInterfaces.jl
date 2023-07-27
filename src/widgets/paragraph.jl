@@ -18,8 +18,8 @@ end
 
 make_words(sentence::String, style = Crayon()) = [Word(word, style) for word in split(sentence)]
 
-function draw(p::Paragraph, area::Rect, buf::Buffer)
-  draw(p.block, area, buf)
+function render(p::Paragraph, area::Rect, buf::Buffer)
+  render(p.block, area, buf)
   text_area = inner(p.block, area)
 
   height(text_area) < 1 && return

@@ -15,10 +15,10 @@ function main()
         1 2 3
         4 5 6
         7 8 9
-      ], cell_height = 6, cell_width = 6)
+      ])
 
       w, h = TUI.size(t)
-      r = TUI.Rect(x, y, w - 5, h - 5)
+      r = TUI.Rect(x, y, w, h)
 
       TUI.draw(t, p, r)
       TUI.flush(t)

@@ -17,9 +17,8 @@ Base.@kwdef struct BarChart
   gap::Int = 0
 end
 
-function draw(bar_chart::BarChart, area::Rect, buf::Buffer)
-
-  draw(bar_chart.block, area, buf)
+function render(bar_chart::BarChart, area::Rect, buf::Buffer)
+  render(bar_chart.block, area, buf)
   chart_area = inner(bar_chart.block, area)
 
   w = bar_chart.width
@@ -94,5 +93,4 @@ function draw(bar_chart::BarChart, area::Rect, buf::Buffer)
   #         self.label_style,
   #     );
   # }
-
 end

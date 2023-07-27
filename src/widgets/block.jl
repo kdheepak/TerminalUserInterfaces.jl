@@ -73,7 +73,7 @@ Base.@kwdef struct Block
   border_style::Crayon = Crayon()
 end
 
-function draw(b::Block, area::Rect, buf::Buffer)
+function render(b::Block, area::Rect, buf::Buffer)
   if b.border & BorderLeft > 0
     x = left(area)
     symbol = vertical(b.border_type)

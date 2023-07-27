@@ -4,8 +4,8 @@ struct List
   scroll::Int
 end
 
-function draw(list::List, area::Rect, buf::Buffer)
-  draw(list.block, area, buf)
+function render(list::List, area::Rect, buf::Buffer)
+  render(list.block, area, buf)
   list_area = inner(list.block, area)
 
   if width(list_area) < 1 || height(list_area) < 1
@@ -31,10 +31,10 @@ struct SelectableList
   selected::Int
 end
 
-function draw(list::SelectableList, area::Rect, buf::Buffer)
+function render(list::SelectableList, area::Rect, buf::Buffer)
   list_area = inner(list.block, area)
 
-  draw(list.block, area, buf)
+  render(list.block, area, buf)
   list_area = inner(list.block, area)
 
   if width(list_area) < 1 || height(list_area) < 1

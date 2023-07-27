@@ -8,8 +8,8 @@ Base.@kwdef struct ProgressBar
   end
 end
 
-function draw(pg::ProgressBar, rect::Rect, buf::Buffer)
-  draw(pg.block, rect, buf)
+function render(pg::ProgressBar, rect::Rect, buf::Buffer)
+  render(pg.block, rect, buf)
 
   inner_area = inner(pg.block, rect)
 

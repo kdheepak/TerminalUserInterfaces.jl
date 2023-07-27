@@ -5,13 +5,13 @@ Base.@kwdef struct MarkdownBlock
   text::Markdown.MD
 end
 
-function draw(d::MarkdownBlock, area::Rect, buf::Buffer)
-  draw(d.block, area, buf)
+function render(d::MarkdownBlock, area::Rect, buf::Buffer)
+  render(d.block, area, buf)
   text_area = inner(d.block, area)
 
   title_area = Rect(left(area), top(area), width(area), height(area) ÷ 5)
   # Assume first block is always the header
-  draw(d.text.content[1], title_area, buf)
+  render(d.text.content[1], title_area, buf)
 
   body_area = Rect(left(area), bottom(title_area), width(area), height(area) - height(title_area))
   body_area = Rect(body_area, Margin(5, 5))
@@ -24,13 +24,13 @@ function draw(d::MarkdownBlock, area::Rect, buf::Buffer)
   )
   for (i, c) in enumerate(d.text.content[2:end])
     inner_area = Rect(left(inner_area), bottom(inner_area), width(inner_area), height(inner_area))
-    draw(c, inner_area, buf)
+    render(c, inner_area, buf)
   end
 end
 
-function draw(h::Markdown.Header, area::Rect, buf::Buffer)
+function render(h::Markdown.Header, area::Rect, buf::Buffer)
   b = Block(; border_type = BorderTypeLight)
-  draw(b, area, buf)
+  render(b, area, buf)
 
   title = h.text[1]
 
@@ -39,8 +39,7 @@ function draw(h::Markdown.Header, area::Rect, buf::Buffer)
   set(buf, col, row, title, Crayon(; bold = true))
 end
 
-function draw(l::Markdown.List, area::Rect, buf::Buffer)
-
+function render(l::Markdown.List, area::Rect, buf::Buffer)
   _s = String[]
   for item in l.items
     iob = IOBuffer()
@@ -58,13 +57,11 @@ function draw(l::Markdown.List, area::Rect, buf::Buffer)
     col = left(item_area)
     set(buf, col, row, " ● ", Crayon(; bold = true, foreground = :red))
     inner_area = Rect(item_area, Margin(0, 5))
-    draw(item[1], inner_area, buf)
+    render(item[1], inner_area, buf)
   end
-
 end
 
-function draw(p::Markdown.Paragraph, area::Rect, buf::Buffer)
-
+function render(p::Markdown.Paragraph, area::Rect, buf::Buffer)
   row = top(area)
   col = left(area)
   for c in p.content
@@ -81,8 +78,7 @@ function draw(p::Markdown.Paragraph, area::Rect, buf::Buffer)
       set(buf, col, row, c.text[1], Crayon(; italics = true))
       col += l
     elseif typeof(c) == Markdown.Image
-      draw(c, area, buf)
+      render(c, area, buf)
     end
   end
-
 end

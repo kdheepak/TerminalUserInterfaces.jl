@@ -11,8 +11,8 @@ Base.@kwdef struct Grid{T}
   end
 end
 
-function draw(grid::Grid, area::Rect, buf::Buffer)
-  draw(grid.block, area, buf)
+function render(grid::Grid, area::Rect, buf::Buffer)
+  render(grid.block, area, buf)
   grid_area = inner(grid.block, area)
   nrows, ncols = Base.size(grid.data)
 

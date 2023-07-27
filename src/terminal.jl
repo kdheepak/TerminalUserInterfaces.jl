@@ -186,6 +186,8 @@ const END = 2 + 1
 
 """
 Update terminal
+
+Switches double buffers
 """
 function update(t::Terminal)
   reset(t.buffers[END-t.current[]])
