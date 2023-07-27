@@ -16,12 +16,14 @@ using Dates
 const DEFAULT_LOGGER = current_logger() # Refers to the current logger
 const DATE_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SS" # Specifies the format to use for dates in log messages
 const PARENT_MODULE = parentmodule(@__MODULE__) # Refers to the parent module of the current module
-const LOG_FOLDER = isnothing(pkgdir(PARENT_MODULE)) ? joinpath(@__DIR__, "log") : joinpath(pkgdir(PARENT_MODULE), "log") # Specifies the folder where log files will be saved
+const LOG_FOLDER =
+  Ref(isnothing(pkgdir(PARENT_MODULE)) ? joinpath(@__DIR__, "log") : joinpath(pkgdir(PARENT_MODULE), "log")) # Specifies the folder where log files will be saved
+const LOG_LEVEL = Ref(Logging.Info)
 
 """
 A function to create a file logger.
 
-This function creates a logger that logs messages to a file with the specified name in the `LOG_FOLDER` directory.
+This function creates a logger that logs messages to a file with the specified name in the `log_folder` directory.
 The logger formats the log messages in a specific way and includes the current date, log level, filename, line number, and message.
 
 Kwargs:
@@ -31,11 +33,11 @@ Kwargs:
 
 Returns:
 
-  - FormatLogger: A logger that logs messages to a file with the specified name in the `LOG_FOLDER` directory.
+  - FormatLogger: A logger that logs messages to a file with the specified name in the `log_folder` directory.
 """
-function file_logger()
+function file_logger(; log_folder)
   # The FormatLogger constructor takes a file path and a function that formats log messages
-  FormatLogger(joinpath(LOG_FOLDER, "TerminalUserInterfaces.log"); append = false) do io, args
+  FormatLogger(joinpath(log_folder, "TerminalUserInterfaces.log"); append = false) do io, args
     # Use datetime in log messages in files
     date = Dates.format(now(), DATE_FORMAT)
     # pad level, filename and lineno so things look nice
@@ -74,6 +76,14 @@ function filename_logger(logger)
   end
 end
 
+function folder(p)
+  LOG_FOLDER[] = p
+end
+
+function level(l)
+  LOG_LEVEL[] = l
+end
+
 """
 A function to initialize the logger.
 
@@ -82,11 +92,11 @@ It also logs a message to indicate that the logger has been initialized.
 """
 function initialize()
   # Create the log folder if it doesn't already exist
-  isdir(LOG_FOLDER) || mkpath(LOG_FOLDER)
+  isdir(LOG_FOLDER[]) || mkpath(LOG_FOLDER[])
   # Initialize the global logger with several loggers:
   global_logger(TeeLogger(
     # A logger that logs messages with a minimum level of Debug to a file called "debug.log" in the LOG_FOLDER directory
-    MinLevelLogger(file_logger(), Logging.Debug),
+    MinLevelLogger(file_logger(; log_folder = LOG_FOLDER[]), LOG_LEVEL[]),
   ))
   # Log a message to indicate that the logger has been initialized
   @debug "Initialized logger"

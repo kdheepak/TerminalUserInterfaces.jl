@@ -12,9 +12,9 @@ function tui(f::Function; flags...)
   return r
 end
 
-function tui(switch = true; enhance_keyboard = true, mouse = true, flush = true)
+function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, flush = true)
   if switch
-    Logger.initialize()
+    log && Logger.initialize()
     Crossterm.cursor(false)
     Crossterm.alternate_screen(true)
     Crossterm.raw_mode(true)
@@ -28,7 +28,7 @@ function tui(switch = true; enhance_keyboard = true, mouse = true, flush = true)
     Crossterm.raw_mode(false)
     Crossterm.alternate_screen(false)
     Crossterm.cursor(true)
-    Logger.reset()
+    log && Logger.reset()
   end
   flush && Crossterm.flush()
 end
