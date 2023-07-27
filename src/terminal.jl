@@ -1,4 +1,5 @@
 import Base.print
+import Dates
 
 """
 Terminal
@@ -36,7 +37,7 @@ end
 Get event (nonblocking)
 """
 function try_get_event(t::Terminal; wait = t.wait)
-  if Crossterm.poll(wait)
+  if Crossterm.poll(Dates.Nanosecond(round(wait * 1e9)))
     Crossterm.read()
   else
     nothing

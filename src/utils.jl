@@ -32,3 +32,23 @@ function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, f
   end
   flush && Crossterm.flush()
 end
+
+update!(m, evt) = nothing
+view(m) = []
+quit(m) = false
+
+function app(m)
+  tui() do
+    t = Terminal()
+    while !quit(m)
+      evt = try_get_event(t)
+      update!(m, evt)
+      w, h = size(t)
+      r = Rect(1, 1, w - 2, h - 2)
+      for w in view(m)
+        draw(t, w, r)
+      end
+      flush(t)
+    end
+  end
+end
