@@ -42,7 +42,7 @@ end
 function TUI.view(m)
   words = [TUI.Word(word, TUI.Crayon()) for word in m.words]
   block = TUI.Block(; title = "Option Picker")
-  [TUI.SelectableList(block, words, m.scroll, m.selection)]
+  TUI.SelectableList(block, words, m.scroll, m.selection)
 end
 
 TUI.quit(m) = m.quit
@@ -52,6 +52,5 @@ function main()
   TUI.app(m)
   println(m.words[m.selection])
 end
-
 
 main()

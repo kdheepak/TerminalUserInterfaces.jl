@@ -35,6 +35,10 @@ end
 
 """
 Get event (nonblocking)
+
+# kwargs
+
+- wait (seconds)
 """
 function try_get_event(t::Terminal; wait = t.wait)
   if Crossterm.poll(Dates.Nanosecond(round(wait * 1e9)))
@@ -53,20 +57,46 @@ end
 
 const TERMINAL = Ref{Terminal}()
 
+const END = 2 + 1
+
 """
 Flush terminal contents
 """
 function flush(t::Terminal)
   previous_buffer = t.buffers[END-t.current[]]
   current_buffer = t.buffers[t.current[]]
-  draw(t, previous_buffer, current_buffer)
+  save_cursor(t)
+  move_cursor_home(t)
+  R, C = Base.size(current_buffer.content)
+  for r in 1:R, c in 1:C
+    if previous_buffer.content[r, c] != current_buffer.content[r, c]
+      move_cursor(t, r, c)
+      cell = current_buffer.content[r, c]
+      put(cell)
+    end
+  end
+  restore_cursor(t)
+  Crossterm.flush()
   update(t)
+  reset(t.buffers[END-t.current[]])
+  t.current[] = END - t.current[]
+  (w, h) = size(t)
+  if t.terminal_size[].width != w || t.terminal_size[].height != h
+    resize(t, w, h)
+    clear_screen(t)
+    move_cursor_home(t)
+  end
 end
+
+"""
+Update terminal
+"""
+function update(t::Terminal) end
 
 """
 Move cursor
 """
-move_cursor(t::Terminal, row, col) = Crossterm.to(; x = col, y = row)
+move_cursor(t::Terminal, row, col) = Crossterm.to(; x = col - 1, y = row - 1)
 """
 Move cursor up
 """
@@ -183,24 +213,6 @@ Reset terminal
 """
 reset(t::Terminal, buffer::Int) = reset(t.buffers[buffer])
 
-const END = 2 + 1
-
-"""
-Update terminal
-
-Switches double buffers
-"""
-function update(t::Terminal)
-  reset(t.buffers[END-t.current[]])
-  t.current[] = END - t.current[]
-  (w, h) = size(t)
-  if t.terminal_size[].width != w || t.terminal_size[].height != h
-    resize(t, w, h)
-    clear_screen(t)
-    move_cursor_home(t)
-  end
-end
-
 put(c::SubString{String}) = Crossterm.print(string(c))
 put(c::Char) = Crossterm.print(c)
 put(s::String) = Crossterm.print(s)
@@ -210,23 +222,7 @@ function put(cell::Cell)
   put(string(inv(cell.style)))
 end
 
-"""
-Draw terminal
-"""
-function draw(t::Terminal, buffer1::Buffer, buffer2::Buffer)
-  save_cursor(t)
-  move_cursor_home(t)
-  R, C = Base.size(buffer2.content)
-  for r in 1:R, c in 1:C
-    if buffer1.content[r, c] != buffer2.content[r, c]
-      move_cursor(t, r, c)
-      cell = buffer2.content[r, c]
-      put(cell)
-    end
-  end
-  restore_cursor(t)
-  Crossterm.flush()
-end
+render(t::Terminal, widget, r::Rect) = render(widget, r, current_buffer(t))
 
 """
 Resize terminal
@@ -245,3 +241,39 @@ function size(t::Terminal)
   (; w, h) = Crossterm.size()
   (w, h)
 end
+
+function tui(f::Function; flags...)
+  r = nothing
+  try
+    tui(true; flags...)
+    r = f()
+  catch err
+    tui(false; flags...)
+    throw(err)
+  finally
+    tui(false; flags...)
+  end
+  return r
+end
+
+function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, flush = true)
+  if switch
+    log && Logger.initialize()
+    Crossterm.cursor(false)
+    Crossterm.alternate_screen(true)
+    Crossterm.raw_mode(true)
+    Crossterm.clear()
+    mouse && Crossterm.mouse_capture(true)
+    enhance_keyboard && Crossterm.enhance_keyboard(true)
+  else
+    enhance_keyboard && Crossterm.enhance_keyboard(false)
+    mouse && Crossterm.mouse_capture(false)
+    Crossterm.clear()
+    Crossterm.raw_mode(false)
+    Crossterm.alternate_screen(false)
+    Crossterm.cursor(true)
+    log && Logger.reset()
+  end
+  flush && Crossterm.flush()
+end
+

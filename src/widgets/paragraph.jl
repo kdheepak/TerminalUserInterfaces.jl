@@ -8,11 +8,11 @@ Base.@kwdef struct Paragraph
   words::Vector{Word}
   scroll::Int = 1
   number_of_lines::Ref{Int}
-  function Paragraph(block, words, scroll)
+  function Paragraph(block, words, scroll, number_of_lines = Ref{Int}(0))
     if scroll < 1
       scroll = 1
     end
-    new(block, words, scroll, Ref{Int}(0))
+    new(block, words, scroll, number_of_lines)
   end
 end
 

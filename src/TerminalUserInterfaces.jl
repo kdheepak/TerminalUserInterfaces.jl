@@ -9,7 +9,6 @@ using Unicode
 export Terminal
 
 include("logger.jl")
-include("utils.jl")
 include("symbols.jl")
 include("layout.jl")
 include("buffer.jl")
@@ -26,5 +25,7 @@ include("widgets/progressbar.jl")
 include("widgets/list.jl")
 include("widgets/barchart.jl")
 include("widgets/grid.jl")
+
+include("app.jl")
 
 end # module

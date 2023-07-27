@@ -3,32 +3,27 @@ const TUI = TerminalUserInterfaces
 using REPL
 using InteractiveUtils
 
-function main(max_count)
-  TUI.tui() do
+@kwdef mutable struct Model
+  quit = false
+  counter = 1
+  max_count = 1000
+end
 
-    y, x = 1, 1
+function TUI.view(m::Model)
+  b = TUI.Block(; border = TUI.BorderAll)
+  pg = TUI.ProgressBar(b, m.counter / m.max_count)
+  pg
+end
 
-    counter = 1
-    t = TUI.Terminal()
-
-    for _ in 1:max_count
-
-      w, h = TUI.size(t)
-
-      r = TUI.Rect(x, y + 1, w - 2, 2)
-
-      b = TUI.Block(; border = TUI.BorderAll)
-      pg = TUI.ProgressBar(b, counter / max_count)
-
-      TUI.draw(t, pg, r)
-      TUI.flush(t)
-
-      counter += 1
-      sleep(0.1)
-
-    end
+function TUI.update!(m::Model, evt)
+  m.counter += 1
+  if m.counter >= m.max_count
+    m.quit = true
   end
+end
 
+function main(max_count)
+  TUI.app(Model(; max_count))
 end
 
 main(100)

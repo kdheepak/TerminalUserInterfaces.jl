@@ -19,7 +19,9 @@ end
 
 function render(bar_chart::BarChart, area::Rect, buf::Buffer)
   render(bar_chart.block, area, buf)
+  @info "" area
   chart_area = inner(bar_chart.block, area)
+  @info "" chart_area
 
   w = bar_chart.width
   gap = bar_chart.gap
@@ -34,23 +36,18 @@ function render(bar_chart::BarChart, area::Rect, buf::Buffer)
 
   data = [Int(round(d * (height(chart_area) - 1) * 8 / max_data, RoundUp)) for (_, d) in bar_chart.data]
 
-  for j in reverse(1:height(chart_area))
+  for j in reverse(top(chart_area):height(chart_area))
+    @info "" top(chart_area), j
     for (i, d) in enumerate(data)
-
       symbol = d > 8 ? BAR[9] : BAR[Int(round(d / 8, RoundUp))+1]
-
       for x in 1:w
-
-        set(buf, left(chart_area) + (i - 1) * (w + gap) + x, top(chart_area) + j, symbol)
-
+        set(buf, left(chart_area) + (i - 1) * (w + gap) + x, j, symbol)
       end
-
       if d > 8
         d -= 8
       else
         d = 0
       end
-
       data[i] = d
     end
   end
@@ -69,28 +66,4 @@ function render(bar_chart::BarChart, area::Rect, buf::Buffer)
     end
 
   end
-
-  # for (i, &(label, value)) in self.data.iter().take(max_index).enumerate() {
-  #     if value != 0 {
-  #         let value_label = &self.values[i];
-  #         let width = value_label.width() as u16;
-  #         if width < self.bar_width {
-  #             buf.set_string(
-  #                 chart_area.left()
-  #                     + i as u16 * (self.bar_width + self.bar_gap)
-  #                     + (self.bar_width - width) / 2,
-  #                 chart_area.bottom() - 2,
-  #                 value_label,
-  #                 self.value_style,
-  #             );
-  #         }
-  #     }
-  #     buf.set_stringn(
-  #         chart_area.left() + i as u16 * (self.bar_width + self.bar_gap),
-  #         chart_area.bottom() - 1,
-  #         label,
-  #         self.bar_width as usize,
-  #         self.label_style,
-  #     );
-  # }
 end

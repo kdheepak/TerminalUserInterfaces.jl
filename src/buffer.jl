@@ -95,7 +95,6 @@ function diff(buffer1::Buffer, buffer2::Buffer)
   return arr
 end
 
-
 function background(buf::Buffer, rect::Rect, color::Crayons.Crayon)
   for y in top(rect):bottom(rect)
     for x in left(rect):right(rect)
@@ -103,5 +102,3 @@ function background(buf::Buffer, rect::Rect, color::Crayons.Crayon)
     end
   end
 end
-
-draw(t, widget, r::Rect) = render(widget, r, current_buffer(t))
