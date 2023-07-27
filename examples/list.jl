@@ -1,6 +1,7 @@
 using TerminalUserInterfaces
 const TUI = TerminalUserInterfaces
 using Random
+using Logging
 
 function main()
   final = TUI.tui() do
@@ -46,6 +47,7 @@ function main()
     while true
 
       w, h = TUI.size(t)
+      @info "size $((; w, h))"
 
       r = TUI.Rect(x, y, w ÷ 4, 20)
 
@@ -59,6 +61,8 @@ function main()
       count += 1
 
       evt = TUI.get_event(t)
+
+      @info evt
 
       if TUI.keycode(evt) == "j" && evt.data.kind == "Press"
         selection += 1

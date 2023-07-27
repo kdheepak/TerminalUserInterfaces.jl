@@ -7,6 +7,7 @@ using TextWrap
 
 export Terminal
 
+include("logger.jl")
 include("utils.jl")
 include("symbols.jl")
 include("layout.jl")

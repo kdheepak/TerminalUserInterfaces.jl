@@ -14,6 +14,7 @@ end
 
 function tui(switch = true; enhance_keyboard = true, mouse = true, flush = true)
   if switch
+    Logger.initialize()
     Crossterm.cursor(false)
     Crossterm.alternate_screen(true)
     Crossterm.raw_mode(true)
@@ -27,6 +28,7 @@ function tui(switch = true; enhance_keyboard = true, mouse = true, flush = true)
     Crossterm.raw_mode(false)
     Crossterm.alternate_screen(false)
     Crossterm.cursor(true)
+    Logger.reset()
   end
   flush && Crossterm.flush()
 end
