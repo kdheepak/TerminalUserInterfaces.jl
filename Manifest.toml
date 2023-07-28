@@ -2,7 +2,7 @@
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "05f47bbfb4a6ca81cdc89562d47dee44b1fced96"
+project_hash = "3a5c7fcc246d5a0ab844266cd21992a61cf52101"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -17,9 +17,9 @@ version = "4.1.1"
 
 [[deps.Crossterm]]
 deps = ["Dates", "EnumX", "JSON3", "libcrossterm_jll"]
-git-tree-sha1 = "961456a31aa550271df5bea44e4c2286336f4f8f"
+git-tree-sha1 = "1c47584edc6fce5c0201d720f4aa61dbfcd64caf"
 uuid = "89a1a94d-67fa-4c27-8677-ab6d33b1ad6c"
-version = "0.4.2"
+version = "0.5.0"
 
 [[deps.Dates]]
 deps = ["Printf"]

@@ -7,6 +7,7 @@ Terminal
 struct Terminal
   buffers::Vector{Buffer}
   current::Ref{UInt8}
+  previous::Ref{UInt8}
   cursor_hidden::Ref{Bool}
   terminal_size::Ref{Rect}
   keyboard_buffer::Vector{Char}
@@ -19,10 +20,11 @@ struct Terminal
     rect = Rect(1, 1, w, h)
     buffers = [Buffer(rect), Buffer(rect)]
     current = 1
+    previous = 2
     cursor_hidden = false
     ispaused = Ref{Bool}(false)
     isclosed = Ref{Bool}(false)
-    t = new(buffers, current, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
+    t = new(buffers, current, previous, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
     TERMINAL[] = t
     return t
   end
@@ -55,43 +57,49 @@ function get_event(::Terminal)
   Crossterm.read()
 end
 
+function update!(t::Terminal, evt) end
+function update!(t::Terminal, evt::Crossterm.Event{Crossterm.MouseEvent}) end
+function update!(t::Terminal, evt::Crossterm.Event{Crossterm.KeyEvent}) end
+function update!(t::Terminal, evt::Crossterm.Event{Crossterm.ResizeEvent})
+  (; w, h) = evt.data
+  resize(t, w, h)
+  clear_screen(t)
+  move_cursor_home(t)
+  Crossterm.flush()
+end
+
 const TERMINAL = Ref{Terminal}()
 
 const END = 2 + 1
 
 """
-Flush terminal contents
+Draw terminal contents
 """
-function flush(t::Terminal)
-  previous_buffer = t.buffers[END-t.current[]]
-  current_buffer = t.buffers[t.current[]]
+function draw(t::Terminal)
+  pb = previous_buffer(t)
+  cb = current_buffer(t)
   save_cursor(t)
-  move_cursor_home(t)
-  R, C = Base.size(current_buffer.content)
+  R, C = Base.size(cb.content)
   for r in 1:R, c in 1:C
-    if previous_buffer.content[r, c] != current_buffer.content[r, c]
+    if pb.content[r, c] != cb.content[r, c]
       move_cursor(t, r, c)
-      cell = current_buffer.content[r, c]
+      cell = cb.content[r, c]
       put(cell)
     end
   end
   restore_cursor(t)
+  Crossterm.foreground(:reset)
+  Crossterm.background(:reset)
+  Crossterm.underline(:reset)
+  Crossterm.style(:reset)
   Crossterm.flush()
-  update(t)
-  reset(t.buffers[END-t.current[]])
-  t.current[] = END - t.current[]
-  (w, h) = size(t)
-  if t.terminal_size[].width != w || t.terminal_size[].height != h
-    resize(t, w, h)
-    clear_screen(t)
-    move_cursor_home(t)
-  end
+  switch_buffers(t)
+  reset(current_buffer())
 end
 
-"""
-Update terminal
-"""
-function update(t::Terminal) end
+function switch_buffers(t)
+  t.current[], t.previous[] = t.previous[], t.current[]
+end
 
 """
 Move cursor
@@ -209,9 +217,10 @@ current_buffer(t::Terminal)::Buffer = t.buffers[t.current[]]
 current_buffer()::Buffer = current_buffer(TERMINAL[])
 
 """
-Reset terminal
+Get previous buffer
 """
-reset(t::Terminal, buffer::Int) = reset(t.buffers[buffer])
+previous_buffer(t::Terminal)::Buffer = t.buffers[t.previous[]]
+previous_buffer()::Buffer = previous_buffer(TERMINAL[])
 
 put(c::SubString{String}) = Crossterm.print(string(c))
 put(c::Char) = Crossterm.print(c)
@@ -230,17 +239,14 @@ Resize terminal
 function resize(t::Terminal, w::Int, h::Int)
   rect = Rect(1, 1, w, h)
   t.terminal_size[] = rect
-  t.buffers[1] = Buffer(rect)
-  t.buffers[2] = Buffer(rect)
+  t.buffers[t.current[]] = Buffer(rect)
+  t.buffers[t.previous[]] = Buffer(rect)
 end
 
 """
-Size of terminal as a tuple (width, height)
+Area of terminal as Rect (width, height)
 """
-function size(t::Terminal)
-  (; w, h) = Crossterm.size()
-  (w, h)
-end
+area(t::Terminal) = t.terminal_size[]
 
 function tui(f::Function; flags...)
   r = nothing
@@ -257,21 +263,20 @@ function tui(f::Function; flags...)
 end
 
 function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, flush = true)
+  flush && Crossterm.flush()
   if switch
     log && Logger.initialize()
-    Crossterm.cursor(false)
-    Crossterm.alternate_screen(true)
     Crossterm.raw_mode(true)
-    Crossterm.clear()
+    Crossterm.alternate_screen(true)
+    Crossterm.cursor(false)
     mouse && Crossterm.mouse_capture(true)
     enhance_keyboard && Crossterm.enhance_keyboard(true)
   else
     enhance_keyboard && Crossterm.enhance_keyboard(false)
     mouse && Crossterm.mouse_capture(false)
-    Crossterm.clear()
-    Crossterm.raw_mode(false)
-    Crossterm.alternate_screen(false)
     Crossterm.cursor(true)
+    Crossterm.alternate_screen(false)
+    Crossterm.raw_mode(false)
     log && Logger.reset()
   end
   flush && Crossterm.flush()

@@ -19,9 +19,7 @@ end
 
 function render(bar_chart::BarChart, area::Rect, buf::Buffer)
   render(bar_chart.block, area, buf)
-  @info "" area
   chart_area = inner(bar_chart.block, area)
-  @info "" chart_area
 
   w = bar_chart.width
   gap = bar_chart.gap
@@ -37,7 +35,6 @@ function render(bar_chart::BarChart, area::Rect, buf::Buffer)
   data = [Int(round(d * (height(chart_area) - 1) * 8 / max_data, RoundUp)) for (_, d) in bar_chart.data]
 
   for j in reverse(top(chart_area):height(chart_area))
-    @info "" top(chart_area), j
     for (i, d) in enumerate(data)
       symbol = d > 8 ? BAR[9] : BAR[Int(round(d / 8, RoundUp))+1]
       for x in 1:w
