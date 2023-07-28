@@ -17,9 +17,9 @@ version = "4.1.1"
 
 [[deps.Crossterm]]
 deps = ["Dates", "EnumX", "JSON3", "libcrossterm_jll"]
-git-tree-sha1 = "30cbf81aba61b065ab4729b5ba16861fa21c50a0"
+git-tree-sha1 = "961456a31aa550271df5bea44e4c2286336f4f8f"
 uuid = "89a1a94d-67fa-4c27-8677-ab6d33b1ad6c"
-version = "0.4.0"
+version = "0.4.2"
 
 [[deps.Dates]]
 deps = ["Printf"]
