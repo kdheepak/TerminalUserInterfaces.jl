@@ -2,7 +2,7 @@ using TerminalUserInterfaces
 const TUI = TerminalUserInterfaces
 using Random
 
-@kwdef mutable struct Model
+@kwdef mutable struct Model <: TUI.Model
   count = 1
   quit = false
 end
@@ -24,8 +24,7 @@ function TUI.view(m)
   )
 end
 
-function TUI.update!(m, evt)
-  !isnothing(evt) && @info evt TUI.keypress(evt) m.quit TUI.quit(m)
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
   if TUI.keypress(evt) == "q"
     m.quit = true
   elseif TUI.keypress(evt) == "j"

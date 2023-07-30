@@ -2,7 +2,7 @@ using TerminalUserInterfaces
 const TUI = TerminalUserInterfaces
 using Random
 
-@kwdef mutable struct Model
+@kwdef mutable struct Model <: TUI.Model
   count = 1
   quit = false
 end
@@ -11,7 +11,7 @@ function TUI.init!(m, _)
   m.quit = false
 end
 
-function TUI.update!(m::Model, evt)
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
   if TUI.keypress(evt) == "j"
     m.count += 1
   elseif TUI.keypress(evt) == "k"

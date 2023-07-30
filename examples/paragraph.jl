@@ -4,7 +4,7 @@ using Random
 
 const WORDS = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 60)
 
-@kwdef mutable struct Model
+@kwdef mutable struct Model <: TUI.Model
   rng = MersenneTwister()
   styles = [
     TUI.Crayon(; bold = true)
@@ -32,7 +32,7 @@ function TUI.view(m)
   p
 end
 
-function TUI.update!(m, evt)
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
   if TUI.keycode(evt) == "j" && evt.data.kind == "Press"
     m.scroll += 1
   elseif TUI.keycode(evt) == "k" && evt.data.kind == "Press"

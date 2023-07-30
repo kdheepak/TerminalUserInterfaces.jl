@@ -3,7 +3,7 @@ const TUI = TerminalUserInterfaces
 using Random
 using Logging
 
-@kwdef mutable struct Model
+@kwdef mutable struct Model <: TUI.Model
   words = [
     "Option A"
     "Option B"

@@ -3,7 +3,7 @@ const TUI = TerminalUserInterfaces
 using REPL
 using InteractiveUtils
 
-@kwdef mutable struct Model
+@kwdef mutable struct Model <: TUI.Model
   quit = false
   counter = 1
   max_count = 1000
@@ -15,9 +15,15 @@ function TUI.view(m::Model)
   pg
 end
 
-function TUI.update!(m::Model, evt)
+function TUI.update!(m::Model, ::Nothing)
   m.counter += 1
   if m.counter >= m.max_count
+    m.quit = true
+  end
+end
+
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
+  if TUI.keypress(evt) == "q"
     m.quit = true
   end
 end
