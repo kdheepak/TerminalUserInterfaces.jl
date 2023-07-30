@@ -8,7 +8,7 @@ struct Max <: SizingConstraint
     value::Int
 end
 
-struct Percentage <: SizingConstraint
+struct Percent <: SizingConstraint
     value::Int
 end
 
@@ -32,18 +32,15 @@ function render(layout::Union{Horizontal, Vertical}, area::Rect, buf::Buffer)
     start_pos = orientation == :horizontal ? left(area) : top(area)
     total_space = orientation == :horizontal ? width(area) : height(area)
 
-    min_and_max_lengths = Int[]
-    percentage_constraints = Int[]
-    for constraint in layout.constraints
+    min_and_max_lengths = Int[0 for _ in layout.constraints]
+    percentage_constraints = Int[0 for _ in layout.constraints]
+    for (i, constraint) in enumerate(layout.constraints)
         if constraint isa Min
-            push!(percentage_constraints, 0)
-            push!(min_and_max_lengths, constraint.value)
+            min_and_max_lengths[i] = constraint.value
         elseif constraint isa Max
-            push!(percentage_constraints, 0)
-            push!(min_and_max_lengths, constraint.value)
-        elseif constraint isa Percentage
-            push!(percentage_constraints, constraint.value)
-            push!(min_and_max_lengths, 0) # Placeholder for percentage
+            min_and_max_lengths[i] = constraint.value
+        elseif constraint isa Percent
+            percentage_constraints[i] = constraint.value
         else
             throw(ArgumentError("Invalid constraint"))
         end
@@ -52,7 +49,7 @@ function render(layout::Union{Horizontal, Vertical}, area::Rect, buf::Buffer)
     # Calculate the remaining length for percentage constraints
     remaining_length = total_space - sum(min_and_max_lengths)
     for (i, constraint) in enumerate(layout.constraints)
-        if constraint isa Percentage
+        if constraint isa Percent
             min_and_max_lengths[i] = (percentage_constraints[i] * remaining_length) ÷ 100
         end
     end

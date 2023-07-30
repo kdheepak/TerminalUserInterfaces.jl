@@ -21,9 +21,9 @@ function TUI.view(m::Model)
   block2 = TUI.Block(; title = "Block 2")
   block3 = TUI.Block(; title = "Block 3")
 
-  horizontal1 = TUI.Horizontal(; widgets = [block1, block2, block3], constraints = [TUI.Percentage(30), TUI.Min(5), TUI.Percentage(30)])
-  horizontal2 = TUI.Horizontal(; widgets = [block1, block2, block3], constraints = [TUI.Min(5), TUI.Percentage(30), TUI.Percentage(30)])
-  TUI.Vertical(; widgets = [horizontal1, horizontal2], constraints = [TUI.Percentage(50), TUI.Percentage(50)])
+  horizontal1 = TUI.Horizontal(; widgets = [block1, block2, block3], constraints = [TUI.Percent(30), TUI.Min(5), TUI.Percent(30)])
+  horizontal2 = TUI.Horizontal(; widgets = [block1, block2, block3], constraints = [TUI.Min(5), TUI.Percent(30), TUI.Percent(30)])
+  TUI.Vertical(; widgets = [horizontal1, horizontal2], constraints = [TUI.Percent(50), TUI.Percent(50)])
 end
 
 function main()
