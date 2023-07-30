@@ -262,7 +262,7 @@ function tui(f::Function; flags...)
   return r
 end
 
-function tui(switch = true; log = true, enhance_keyboard = true, mouse = true, flush = true)
+function tui(switch = true; log = true, enhance_keyboard = true, mouse = false, flush = true)
   flush && Crossterm.flush()
   if switch
     log && Logger.initialize()
