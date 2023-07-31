@@ -16,7 +16,7 @@ function render(pg::ProgressBar, rect::Rect, buf::Buffer)
   inv_crayon = isnothing(pg.inv_crayon) ? inv(pg.crayon) : pg.inv_crayon
 
   for y in top(inner_area):(bottom(inner_area)-1)
-    for x in left(inner_area):right(inner_area)
+    for x in left(inner_area):(right(inner_area)-1)
       if x <= pg.ratio * (right(inner_area) - left(inner_area) + 1)
         set(buf, x, y, pg.crayon)
       else

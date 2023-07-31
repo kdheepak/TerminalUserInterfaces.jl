@@ -11,7 +11,12 @@ end
 
 function TUI.view(m::Model)
   b = TUI.Block(; border = TUI.BorderAll)
-  pg = TUI.ProgressBar(b, m.counter / m.max_count)
+  pg = TUI.ProgressBar(;
+    block = b,
+    ratio = m.counter / m.max_count,
+    crayon = TUI.Crayon(; foreground = :black, background = :white),
+    inv_crayon = TUI.Crayon(; foreground = :white, background = :black),
+  )
   pg
 end
 
