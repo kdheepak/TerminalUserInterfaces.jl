@@ -270,9 +270,9 @@ function tui(switch = true; log = true, enhance_keyboard = true, mouse = false, 
     Crossterm.alternate_screen(true)
     Crossterm.cursor(false)
     mouse && Crossterm.mouse_capture(true)
-    enhance_keyboard && Crossterm.enhance_keyboard(true)
+    (enhance_keyboard && !Sys.iswindows()) && Crossterm.enhance_keyboard(true)
   else
-    enhance_keyboard && Crossterm.enhance_keyboard(false)
+    (enhance_keyboard && !Sys.iswindows()) && Crossterm.enhance_keyboard(false)
     mouse && Crossterm.mouse_capture(false)
     Crossterm.cursor(true)
     Crossterm.alternate_screen(false)
