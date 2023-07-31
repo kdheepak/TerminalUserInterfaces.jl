@@ -25,6 +25,7 @@ function TUI.view(m)
 end
 
 function TUI.update!(m::Model, evt::TUI.KeyEvent)
+  @info evt TUI.keypress(evt) m.quit TUI.quit(m)
   if TUI.keypress(evt) == "q"
     m.quit = true
   elseif TUI.keypress(evt) == "j"

@@ -1,8 +1,4 @@
 
-const ResizeEvent = Crossterm.Event{Crossterm.ResizeEvent}
-const KeyEvent = Crossterm.Event{Crossterm.KeyEvent}
-const MouseEvent = Crossterm.Event{Crossterm.MouseEvent}
-
 abstract type Model end
 
 terminal(::Model) = TERMINAL[]
@@ -16,14 +12,6 @@ end
 views(m::Model) = [view(m)]
 view(::Model) = nothing
 quit(m::Model) = m.quit
-
-keycode(evt::KeyEvent) = evt.data.code
-keycode(_) = ""
-
-keymodifier(evt::KeyEvent) = evt.data.modifiers
-
-keypress(evt::KeyEvent) = evt.data.kind == "Press" ? keycode(evt) : ""
-keypress(_) = ""
 
 function app(m; fps = 30)
   tui() do

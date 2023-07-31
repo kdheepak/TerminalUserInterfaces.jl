@@ -20,7 +20,7 @@ using Logging
   quit = false
 end
 
-function TUI.update!(m::Model, evt)
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
   !isnothing(evt) && @info "Received event" evt
   if TUI.keypress(evt) == "j"
     m.selection += 1
