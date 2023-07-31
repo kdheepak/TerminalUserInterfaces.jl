@@ -1,12 +1,12 @@
 
-Base.@kwdef struct Cell{T}
-  char::T
-  style::Crayons.Crayon
+@kwdef struct Cell{T}
+  content::T
+  style::Crayons.Crayon = Crayon()
 end
 
-Cell(char) = Cell(char, Crayons.Crayon())
+Cell(content) = Cell(content, Crayons.Crayon())
 
-convert(::Type{Cell}, char::Char) = Cell(char)
+convert(::Type{Cell}, content::Char) = Cell(content)
 
 struct Buffer
   area::Rect
@@ -33,10 +33,22 @@ function Buffer(lines::Vector{String})
   return buffer
 end
 
+function set(buffer::Buffer, area::Rect, style::Crayons.Crayon)
+  for j in area.y:area.height, i in area.x:area.width
+    set(buffer, i, j, style)
+  end
+end
+
+function set(buffer::Buffer, area::Rect, cell::Cell)
+  for j in area.y:area.height, i in area.x:area.width
+    set(buffer, i, j, cell)
+  end
+end
+
 function set(buffer::Buffer, col::Integer, row::Integer, style::Crayons.Crayon)
   row = min(row, Base.size(buffer.content, 1))
   col = min(col, Base.size(buffer.content, 2))
-  buffer.content[row, col] = Cell(buffer.content[row, col].char, style)
+  buffer.content[row, col] = Cell(buffer.content[row, col].content, style)
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, lines::Vector{T}) where {T<:AbstractString}

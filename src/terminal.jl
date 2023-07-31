@@ -227,7 +227,7 @@ put(c::Char) = Crossterm.print(c)
 put(s::String) = Crossterm.print(s)
 function put(cell::Cell)
   put(string(cell.style))
-  put(cell.char)
+  put(cell.content)
   put(string(inv(cell.style)))
 end
 
