@@ -12,7 +12,7 @@ Create TerminalUserInterfaces in Julia.
 ### Installation
 
 ```
-(v1.4)> add TerminalUserInterfaces
+pkg> add TerminalUserInterfaces
 ```
 
 ### Usage
