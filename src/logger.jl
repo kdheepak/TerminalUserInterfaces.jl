@@ -71,6 +71,20 @@ function level(l)
   LOG_LEVEL[] = l
 end
 
+function log_level_from_string(s)
+  if s == "Info"
+    Logging.Info
+  elseif s == "Debug"
+    Logging.Debug
+  elseif s == "Warn"
+    Logging.Warn
+  elseif s == "Error"
+    Logging.Error
+  else
+    Logging.Info
+  end
+end
+
 """
 A function to initialize the logger.
 
@@ -78,6 +92,7 @@ This function initializes the logging system by creating the log folder if it do
 It also logs a message to indicate that the logger has been initialized.
 """
 function initialize()
+  level(log_level_from_string(get(ENV, "TERMINAL_USER_INTERFACES_LOG_LEVEL", "Info")))
   # Create the log folder if it doesn't already exist
   isdir(LOG_FOLDER[]) || mkpath(LOG_FOLDER[])
   # Initialize the global logger with several loggers:
