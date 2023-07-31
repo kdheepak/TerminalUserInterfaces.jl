@@ -5,7 +5,7 @@ struct Backward <: ScrollDirection end
 @kwdef mutable struct ScrollbarState
   position::Int
   content_length::Int
-  viewport_content_length::Int
+  viewport_content_length::Int = 0
 end
 
 function position(state::ScrollbarState, position)
