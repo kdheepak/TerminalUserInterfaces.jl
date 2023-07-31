@@ -44,7 +44,8 @@ function file_logger(; log_folder)
     lineno = rpad(args.line, 1, " ")
     message = args.message
     # Write the formatted log message to the file
-    println(io, "$date | $level | $filename:$lineno - $message $(args.kwargs...)")
+    kwargs = join(["$k => $v" for (k, v) in args.kwargs], ", ")
+    println(io, "$date | $level | $filename:$lineno - $message $kwargs")
     # If the log message includes an exception, print it explicitly
     if :exception ∈ keys(args.kwargs)
       e, stacktrace = args.kwargs[:exception]

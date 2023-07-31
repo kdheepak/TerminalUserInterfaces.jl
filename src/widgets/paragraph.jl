@@ -29,7 +29,7 @@ function render(p::Paragraph, area::Rect, buf::Buffer)
   word_count = 1
   for (i, line) in enumerate(lines)
     words = split(line)
-    if i < p.scroll || i - p.scroll > height(text_area)
+    if i < p.scroll || (i - p.scroll) >= height(text_area)
       for _ in words
         word_count += 1
       end

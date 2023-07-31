@@ -2,7 +2,7 @@ using TerminalUserInterfaces
 const TUI = TerminalUserInterfaces
 using Random
 
-const WORDS = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 60)
+const WORDS = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 120)
 
 @kwdef mutable struct Model <: TUI.Model
   rng = MersenneTwister()
