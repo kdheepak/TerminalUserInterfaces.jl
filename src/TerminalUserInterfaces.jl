@@ -26,7 +26,7 @@ include("widgets/list.jl")
 include("widgets/barchart.jl")
 include("widgets/grid.jl")
 include("widgets/layout.jl")
-include("widgets/button.jl")
+include("widgets/scrollbar.jl")
 
 include("app.jl")
 

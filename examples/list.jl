@@ -39,13 +39,11 @@ function TUI.update!(m::Model, evt::TUI.KeyEvent)
   end
 end
 
-function TUI.view(m)
+function TUI.view(m::Model)
   words = [TUI.Word(word, TUI.Crayon()) for word in m.words]
   block = TUI.Block(; title = "Option Picker")
   TUI.SelectableList(block, words, m.scroll, m.selection)
 end
-
-TUI.quit(m) = m.quit
 
 function main()
   m = Model()

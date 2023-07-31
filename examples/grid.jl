@@ -33,8 +33,6 @@ function TUI.view(m::Model)
   ])
 end
 
-TUI.quit(m::Model) = m.quit
-
 function main()
   m = Model()
   TUI.app(m)

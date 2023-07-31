@@ -26,10 +26,11 @@ const WORDS = repeat("The Quick Brown Fox Jumps Over The Lazy Dog. ", 60)
   quit = false
 end
 
-function TUI.view(m::Model)
+function TUI.views(m::Model)
   b = TUI.Block(; title = "Paragraph example")
   p = TUI.Paragraph(b, m.words, m.scroll, m.number_of_lines)
-  p
+  s = TUI.Scrollbar(; state = TUI.ScrollbarState(0, 5, 5))
+  [p, s]
 end
 
 function TUI.update!(m::Model, evt::TUI.KeyEvent)

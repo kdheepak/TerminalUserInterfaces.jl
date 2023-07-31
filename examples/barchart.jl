@@ -7,7 +7,7 @@ using Random
   quit = false
 end
 
-function TUI.view(m)
+function TUI.view(m::Model)
   b = TUI.Block(; title = "Bar Chart")
   TUI.BarChart(;
     block = b,
@@ -25,7 +25,6 @@ function TUI.view(m)
 end
 
 function TUI.update!(m::Model, evt::TUI.KeyEvent)
-  @info evt TUI.keypress(evt) m.quit TUI.quit(m)
   if TUI.keypress(evt) == "q"
     m.quit = true
   elseif TUI.keypress(evt) == "j"
