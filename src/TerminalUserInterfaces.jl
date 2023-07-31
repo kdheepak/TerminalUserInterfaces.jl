@@ -18,15 +18,16 @@ include("event.jl")
 include("widgets/widgets.jl")
 
 include("widgets/block.jl")
+include("widgets/layout.jl")
 
+include("widgets/barchart.jl")
+include("widgets/grid.jl")
+include("widgets/list.jl")
 include("widgets/markdown.jl")
 include("widgets/paragraph.jl")
 include("widgets/progressbar.jl")
-include("widgets/list.jl")
-include("widgets/barchart.jl")
-include("widgets/grid.jl")
-include("widgets/layout.jl")
 include("widgets/scrollbar.jl")
+include("widgets/table.jl")
 
 include("app.jl")
 

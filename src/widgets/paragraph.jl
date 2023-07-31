@@ -1,8 +1,3 @@
-Base.@kwdef struct Word
-  text::String
-  style::Crayon = Crayon()
-end
-
 Base.@kwdef struct Paragraph
   block::Block
   words::Vector{Word}

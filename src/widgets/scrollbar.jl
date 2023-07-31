@@ -56,10 +56,10 @@ struct HorizontalTop <: ScrollbarOrientation end
 @kwdef struct Scrollbar
   state::ScrollbarState
   orientation::ScrollbarOrientation = VerticalRight()
-  thumb_style::Crayon = Crayon()
   thumb_symbol::String = "█"
+  thumb_style::Crayon = Crayon()
+  track_symbol::Union{String,Nothing} = "║"
   track_style::Crayon = Crayon()
-  track_symbol::String = "║"
   begin_symbol::Union{String,Nothing} = "▲"
   begin_style::Crayon = Crayon()
   end_symbol::Union{String,Nothing} = "▼"
@@ -147,6 +147,8 @@ function render(scrollbar::Scrollbar, area::Rect, buffer::Buffer)
     if i >= thumb_start && i < thumb_end
       style = scrollbar.thumb_style
       symbol = scrollbar.thumb_symbol
+    elseif isnothing(scrollbar.track_symbol)
+      continue
     else
       style = scrollbar.track_style
       symbol = scrollbar.track_symbol
