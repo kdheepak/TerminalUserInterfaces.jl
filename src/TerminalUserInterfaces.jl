@@ -6,6 +6,8 @@ using Crayons
 using TextWrap
 using Unicode
 using InlineTest
+using JuMP
+using GLPK
 
 export Terminal
 
