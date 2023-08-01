@@ -73,6 +73,34 @@ Base.@kwdef struct Block
   border_style::Crayon = Crayon()
 end
 
+function inner(b::Block, area::Rect)
+  if width(area) < 2 || height(area) < 2
+    return Rect()
+  end
+
+  x = left(area)
+  y = top(area)
+  w = width(area)
+  h = height(area)
+
+  if b.border & BorderLeft > 0
+    x += 1
+    w -= 1
+  end
+  if b.border & BorderTop > 0
+    y += 1
+    h -= 1
+  end
+  if b.border & BorderRight > 0
+    w -= 1
+  end
+  if b.border & BorderBottom > 0
+    h -= 1
+  end
+
+  Rect(x, y, w, h)
+end
+
 function render(b::Block, area::Rect, buf::Buffer)
   if b.border & BorderLeft > 0
     x = left(area)
@@ -116,35 +144,6 @@ function render(b::Block, area::Rect, buf::Buffer)
     set(buf, right(area), bottom(area), bottom_right(b.border_type), b.border_style)
   end
   X = left(area)
-  W = min(width(area), Base.size(buf.content, 2))
   set(buf, X + 2, top(area), b.title, b.title_style)
 end
 
-
-function inner(b::Block, area::Rect)
-  if width(area) < 2 || height(area) < 2
-    return Rect()
-  end
-
-  x = left(area)
-  y = top(area)
-  w = width(area)
-  h = height(area)
-
-  if b.border & BorderLeft > 0
-    x += 1
-    w -= 1
-  end
-  if b.border & BorderTop > 0
-    y += 1
-    h -= 1
-  end
-  if b.border & BorderRight > 0
-    w -= 1
-  end
-  if b.border & BorderBottom > 0
-    h -= 1
-  end
-
-  return Rect(x, y, w, h)
-end
