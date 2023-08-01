@@ -31,11 +31,10 @@ function get_columns_widths(table::Table, max_width::Int)
     push!(constraints, constraint)
     push!(constraints, Min(table.column_spacing))
   end
-  chunks = split(Horizontal(similar(constraints), constraints), Rect(0, 0, max_width, 1))
+  chunks = split(Horizontal(; constraints), Rect(0, 0, max_width, 1))
   @info (; chunks)
   return map(c -> c.width, chunks[1:2:end])
 end
-
 
 function get_row_bounds(table::Table, max_height::Int)
   offset = min(table.state.offset, length(table.rows) - 1)
@@ -69,7 +68,6 @@ function get_row_bounds(table::Table, max_height::Int)
   end
   return start, stop
 end
-
 
 
 function render(table::Table, area::Rect, buf::Buffer)

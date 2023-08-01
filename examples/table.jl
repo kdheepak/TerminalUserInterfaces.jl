@@ -10,7 +10,7 @@ end
 function TUI.view(m::Model)
   cells = [TUI.Cell(; content = "Hello"), TUI.Cell(; content = "World")]
   rows = [TUI.Row(; cells), TUI.Row(; cells), TUI.Row(; cells)]
-  widths = [TUI.Percent(50), TUI.Percent(50)]
+  widths = [TUI.Auto(50), TUI.Auto(50)]
   TUI.Table(; rows, widths)
 end
 

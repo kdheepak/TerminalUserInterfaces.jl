@@ -91,6 +91,11 @@ struct Auto <: Constraint
   value::Int
 end
 
+# Percent constraint to set a percent size
+struct Percent <: Constraint
+  value::Int
+end
+
 # Fixed constraint to set a fixed size
 struct Fixed <: Constraint
   value::Int
@@ -113,6 +118,7 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   num_constraints = length(layout.constraints)
   model = JuMP.Model(GLPK.Optimizer)
   @variable(model, 0 <= x[1:num_constraints] <= total_space)
+  @variable(model, 0 <= slack[1:num_constraints] <= total_space)
   @variable(model, diffs[1:num_constraints, 1:num_constraints] >= 0) # Differences between all pairs of x's
   # Constraints to calculate differences
   for i in 1:num_constraints
@@ -127,13 +133,15 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
       @constraint(model, x[i] >= c.value)
     elseif c isa Max
       @constraint(model, x[i] <= c.value)
+    elseif c isa Percent
+      @constraint(model, (x[i] / 100) * total_space == c.value + slack[i])
     elseif c isa Fixed
       @constraint(model, x[i] == c.value)
     end
   end
   # Total space constraint
   @constraint(model, sum(x) == total_space)
-  @objective(model, Min, sum(diffs))
+  @objective(model, Min, sum(diffs) + sum(slack) * 99999)
   optimize!(model)
 
   final_sizes = round.(Int, value.(x))
@@ -251,6 +259,18 @@ end
   @test width(Rect(1, 1, 100, 1)) == 100
   @test width(r1) == 50
   @test width(r2) == 50
+
+  # constraints = [Percent(75), Min(50)]
+  # r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  # @test width(Rect(1, 1, 100, 1)) == 100
+  # @test width(r1) == 50
+  # @test width(r2) == 50
+  #
+  # constraints = [Percent(75), Min(50)]
+  # r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  # @test width(Rect(1, 1, 100, 1)) == 100
+  # @test width(r1) == 50
+  # @test width(r2) == 50
 
   constraints = [Max(100), Max(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
