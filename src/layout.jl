@@ -1,7 +1,5 @@
 # Rect
 
-const MAX_AREA = typemax(Int)
-
 struct Margin
   vertical::Int
   horizontal::Int
@@ -75,88 +73,188 @@ end
 
 # Layout
 
+# Define abstract type Constraint to unify different types of constraints
 abstract type Constraint end
 
+# Min constraint to set a minimum value for sizing
 struct Min <: Constraint
   value::Int
 end
 
+# Max constraint to set a maximum value for sizing
 struct Max <: Constraint
   value::Int
 end
 
-struct Percent <: Constraint
+# Auto constraint to set remaining size
+struct Auto <: Constraint
   value::Int
 end
 
+# Fixed constraint to set a fixed size
+struct Fixed <: Constraint
+  value::Int
+end
+
+# Horizontal layout to group constraints for horizontal orientation
 @kwdef struct Horizontal
   constraints::Vector{Constraint}
 end
 
+# Vertical layout to group constraints for vertical orientation
 @kwdef struct Vertical
   constraints::Vector{Constraint}
 end
 
+
 function split(layout::Union{Horizontal,Vertical}, area::Rect)
   orientation = layout isa Horizontal ? :horizontal : :vertical
-
-  start_pos = orientation == :horizontal ? left(area) : top(area)
   total_space = orientation == :horizontal ? width(area) : height(area)
-
-  min_and_max_lengths = Int[0 for _ in layout.constraints]
-  percentage_constraints = Int[0 for _ in layout.constraints]
-  for (i, constraint) in enumerate(layout.constraints)
-    if constraint isa Min
-      min_and_max_lengths[i] = constraint.value
-    elseif constraint isa Max
-      min_and_max_lengths[i] = constraint.value
-    elseif constraint isa Percent
-      percentage_constraints[i] = constraint.value
-    else
-      throw(ArgumentError("Invalid constraint"))
+  num_constraints = length(layout.constraints)
+  model = JuMP.Model(GLPK.Optimizer)
+  @variable(model, 0 <= x[1:num_constraints] <= total_space)
+  @variable(model, diffs[1:num_constraints, 1:num_constraints] >= 0) # Differences between all pairs of x's
+  # Constraints to calculate differences
+  for i in 1:num_constraints
+    for j in i+1:num_constraints
+      @constraint(model, diffs[i, j] >= x[i] - x[j])
+      @constraint(model, diffs[i, j] >= x[j] - x[i])
     end
   end
-
-  # Calculate the remaining length for percentage constraints
-  remaining_length = total_space - sum(min_and_max_lengths)
-  for (i, constraint) in enumerate(layout.constraints)
-    if constraint isa Percent
-      min_and_max_lengths[i] = (percentage_constraints[i] * remaining_length) ÷ 100
+  # Handle Min and Max constraints
+  for (i, c) in enumerate(layout.constraints)
+    if c isa Min
+      @constraint(model, x[i] >= c.value)
+    elseif c isa Max
+      @constraint(model, x[i] <= c.value)
+    elseif c isa Fixed
+      @constraint(model, x[i] == c.value)
     end
   end
+  # Total space constraint
+  @constraint(model, sum(x) == total_space)
+  @objective(model, Min, sum(diffs))
+  optimize!(model)
 
-  # If there's any Min constraint, distribute the remaining width equally to all Min constraints
-  remaining_length = total_space - sum(min_and_max_lengths)
-  num_min_constraints = count(c -> c isa Min, layout.constraints)
-  if num_min_constraints > 0 && remaining_length > 0
-    extra_length_per_min = div(remaining_length, num_min_constraints)
-    for (i, constraint) in enumerate(layout.constraints)
-      if constraint isa Min
-        min_and_max_lengths[i] += extra_length_per_min
-      end
-    end
-  end
-
+  final_sizes = round.(Int, value.(x))
   rects = []
-  for len in min_and_max_lengths
-    rect =
-      orientation == :horizontal ? Rect(start_pos, top(area), len - 1, height(area)) :
-      Rect(left(area), start_pos, width(area), len - 1)
-    push!(rects, rect)
-    start_pos += len
+  current_x, current_y = area.x, area.y
+  for size in final_sizes
+    if isa(layout, Horizontal)
+      push!(rects, Rect(current_x, area.y, size, area.height))
+      current_x += size
+    else
+      push!(rects, Rect(area.x, current_y, area.width, size))
+      current_y += size
+    end
   end
   rects
 end
 
 @testset "layout-rects" begin
+  constraints = [Fixed(50), Fixed(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Fixed(50), Auto(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Fixed(25), Fixed(25), Fixed(25), Fixed(25)]
+  r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 25
+  @test width(r2) == 25
+  @test width(r3) == 25
+  @test width(r4) == 25
+
   constraints = [Min(5), Min(5)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  @test width(r1) == 49
-  @test width(r2) == 49
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Min(5), Min(10)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Min(5), Min(10), Min(15), Min(20)]
+  r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 25
+  @test width(r2) == 25
+  @test width(r3) == 25
+  @test width(r4) == 25
+
+  constraints = [Min(5), Auto(50), Min(15), Min(15)]
+  r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 25
+  @test width(r2) == 25
+  @test width(r3) == 25
+  @test width(r4) == 25
+
+  constraints = [Auto(5), Auto(50), Max(8), Max(15)]
+  r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 38
+  @test width(r2) == 38
+  @test width(r3) == 8
+  @test width(r4) == 15
+
+  constraints = [Min(5), Fixed(20), Min(15)]
+  r1, r2, r3 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 40
+  @test width(r2) == 20
+  @test width(r3) == 40
+
+  constraints = [Max(95), Fixed(20), Max(85)]
+  r1, r2, r3 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 40
+  @test width(r2) == 20
+  @test width(r3) == 40
 
   constraints = [Max(5), Min(5)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  @test width(r1) == 4
-  @test width(r2) == 94
-end
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 5
+  @test width(r2) == 95
 
+  constraints = [Min(5), Max(5)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 95
+  @test width(r2) == 5
+
+  constraints = [Max(75), Max(75)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Max(75), Max(60)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Max(100), Max(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Max(100), Max(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+end
