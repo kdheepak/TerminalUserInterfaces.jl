@@ -31,13 +31,14 @@ function get_columns_widths(table::Table, max_width::Int)
     push!(constraints, constraint)
     push!(constraints, Min(table.column_spacing))
   end
-  chunks = split(Vertical(similar(constraints), constraints), Rect(0, 0, max_width, 1))
+  chunks = split(Horizontal(similar(constraints), constraints), Rect(0, 0, max_width, 1))
+  @info (; chunks)
   return map(c -> c.width, chunks[1:2:end])
 end
 
 
-function get_row_bounds(table::Table, offset::Int, max_height::Int)
-  offset = min(offset, length(table.rows) - 1)
+function get_row_bounds(table::Table, max_height::Int)
+  offset = min(table.state.offset, length(table.rows) - 1)
   start = offset
   stop = offset
   height = 0
@@ -72,6 +73,7 @@ end
 
 
 function render(table::Table, area::Rect, buf::Buffer)
+  @info "###### STARTING RENDER #######"
   set(buf, area, table.style)
   table_area = table.block === nothing ? area : inner(render(table.block, area, buf))
 
@@ -104,11 +106,16 @@ function render(table::Table, area::Rect, buf::Buffer)
   if isempty(table.rows)
     return
   end
-  start, stop = get_row_bounds(table, table.state.offset, rows_height)
+
+  @info (; columns_widths)
+  start, stop = get_row_bounds(table, rows_height)
+  @info (; start, stop)
   table.state.offset = start
   for (i, table_row) in enumerate(table.rows[start+1:stop])
+
     row, col = (top(table_area) + current_height, left(table_area))
     current_height += total_height(table_row)
+    @info (; row, col, current_height)
     table_row_area = Rect(col, row, table_area.width, table_row.height)
     set(buf, table_row_area, table_row.style)
     is_selected = table.state.selected === i

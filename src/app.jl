@@ -12,6 +12,11 @@ end
 views(m::Model) = [view(m)]
 view(::Model) = @debug "No view found for model"
 should_quit(m::Model) = m.quit
+render(m::Model, r::Rect, buf::Buffer) =
+  for w in views(m)
+    @debug "rendering $(typeof(w))"
+    render(w, r, buf)
+  end
 
 function app(m; fps = 30)
   tui() do
@@ -25,11 +30,7 @@ function app(m; fps = 30)
       @debug "Updating model"
       update!(m, evt)
       @debug "Rendering model"
-      r = area(t)
-      for w in views(m)
-        @debug "rendering $(typeof(w))"
-        render(t, w, r)
-      end
+      render(t, m)
       @debug "Drawing model"
       draw(t)
     end

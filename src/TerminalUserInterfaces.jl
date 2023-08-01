@@ -5,6 +5,7 @@ using Crossterm
 using Crayons
 using TextWrap
 using Unicode
+using InlineTest
 
 export Terminal
 

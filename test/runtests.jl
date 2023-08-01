@@ -1,7 +1,4 @@
-using TerminalUserInterfaces
-const TUI = TerminalUserInterfaces
-using Test
+using ReTest
+import TerminalUserInterfaces as TUI
+TUI.runtests()
 
-@testset "TUI.jl" begin
-    # Write your own tests here.
-end

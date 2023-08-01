@@ -231,6 +231,7 @@ function put(cell::Cell)
   put(string(inv(cell.style)))
 end
 
+render(t::Terminal, widget) = render(t, widget, area(t))
 render(t::Terminal, widget, r::Rect) = render(widget, r, current_buffer(t))
 
 """
