@@ -47,21 +47,26 @@ function TUI.update!(m::Model, evt::TUI.KeyEvent)
   end
 end
 
-function TUI.render(m::Model, r::TUI.Rect, buf::TUI.Buffer)
+function TUI.view(m::Model)
   block1 = TUI.Block(; title = "Block 1")
   block2 = TUI.Block(; title = "Block 2")
   block3 = TUI.Block(; title = "Block 3")
 
-  v1, v2 = TUI.split(TUI.Vertical(; constraints = [TUI.Percent(50), TUI.Percent(50)]), r)
-  h1, h2, h3 = TUI.split(TUI.Horizontal(; constraints = [TUI.Percent(30), TUI.Min(5), TUI.Percent(30)]), v1)
-  TUI.render(block1, h1, buf)
-  TUI.render(block2, h2, buf)
-  TUI.render(block3, h3, buf)
-
-  h1, h2, h3 = TUI.split(TUI.Horizontal(; constraints = [TUI.Min(5), TUI.Percent(30), TUI.Percent(30)]), v2)
-  TUI.render(block1, h1, buf)
-  TUI.render(block2, h2, buf)
-  TUI.render(block3, h3, buf)
+  horizontal1 = TUI.Layout(;
+    widgets = [block1, block2, block3],
+    constraints = [TUI.Percent(30), TUI.Min(5), TUI.Percent(30)],
+    orientation = :horizontal,
+  )
+  horizontal2 = TUI.Layout(;
+    widgets = [block1, block2, block3],
+    constraints = [TUI.Min(5), TUI.Percent(30), TUI.Percent(30)],
+    orientation = :horizontal,
+  )
+  TUI.Layout(;
+    widgets = [horizontal1, horizontal2],
+    constraints = [TUI.Percent(50), TUI.Percent(50)],
+    orientation = :vertical,
+  )
 end
 
 function main()
