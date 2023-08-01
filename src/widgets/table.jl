@@ -69,68 +69,49 @@ function get_row_bounds(table::Table, max_height::Int)
   return start, stop
 end
 
-
 function render(table::Table, area::Rect, buf::Buffer)
-  @info "###### STARTING RENDER #######"
-  set(buf, area, table.style)
-  table_area = table.block === nothing ? area : inner(render(table.block, area, buf))
-
-  has_selection = !isnothing(table.state.selected)
-  columns_widths = get_columns_widths(table, table_area.width)
-  highlight_symbol = table.highlight_symbol === nothing ? "" : table.highlight_symbol
-  current_height = 0
-  rows_height = table_area.height
-
-  # Draw header
-  if !isnothing(table.header)
-    header = table.header
-    max_header_height = min(table_area.height, total_height(header))
-    set(
-      buf,
-      Rect(left(table_area), top(table_area), width(table_area), min(height(table_area), height(header))),
-      header.style,
-    )
-    col = left(table_area)
-    col += has_selection ? min(width(highlight_symbol), width(table_area)) : 0
-    for (width, cell) in zip(columns_widths, header.cells)
-      set(buf, Rect(col, top(table_area), width, max_header_height), cell)
-      col += width + table.column_spacing
-    end
-    current_height += max_header_height
-    rows_height = rows_height - max_header_height
-  end
-
-  # Draw rows
-  if isempty(table.rows)
+  # Check if there's space to render
+  if width(area) < 1 || height(area) < 1
     return
   end
 
-  @info (; columns_widths)
-  start, stop = get_row_bounds(table, rows_height)
-  @info (; start, stop)
-  table.state.offset = start
-  for (i, table_row) in enumerate(table.rows[start+1:stop])
+  # Calculate column widths and row bounds
+  column_widths = get_columns_widths(table, width(area))
+  start_row, stop_row = get_row_bounds(table, height(area))
 
-    row, col = (top(table_area) + current_height, left(table_area))
-    current_height += total_height(table_row)
-    @info (; row, col, current_height)
-    table_row_area = Rect(col, row, table_area.width, table_row.height)
-    set(buf, table_row_area, table_row.style)
-    is_selected = table.state.selected === i
-    table_row_start_col = if has_selection
-      # TODO: implement highlight row
-      col
-    else
-      col
-    end
-    col = table_row_start_col
-    for (width, cell) in zip(columns_widths, table_row.cells)
-      set(buf, Rect(col, row, width, table_row.height), cell)
-      col += width + table.column_spacing
-    end
-    if is_selected
-      set(buf, table_row_area, table.highlight_style)
-    end
+  # Optionally render block around the table
+  if !isnothing(table.block)
+    render(table.block, area, buf)
+  end
+
+  # Create the table area inside the block (if exists) or the full area
+  table_area = isnothing(table.block) ? area : inner(table.block, area)
+
+  x, y = left(table_area), top(table_area)
+
+  # Optionally render the header row
+  if !isnothing(table.header)
+    render_row(table.header, x, y, column_widths, buf)
+    y += total_height(table.header)
+  end
+
+  # Render rows within start and stop bounds
+  for i in start_row+1:stop_row
+    row = table.rows[i]
+    render_row(row, x, y, column_widths, buf)
+    y += total_height(row)
   end
 end
+
+# Helper function to render a row
+function render_row(row::Row, x::Int, y::Int, column_widths::Vector{Int}, buf::Buffer)
+  x_offset = x
+  for (i, cell) in enumerate(row.cells)
+    # Render cell (you may need to define this part, depending on how you want to display cells)
+    # Example:
+    set(buf, x_offset, y, cell.content, cell.style)
+    x_offset += column_widths[i]
+  end
+end
+
 
