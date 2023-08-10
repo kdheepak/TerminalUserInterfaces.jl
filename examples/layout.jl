@@ -54,12 +54,12 @@ function TUI.view(m::Model)
 
   horizontal1 = TUI.Layout(;
     widgets = [block1, block2, block3],
-    constraints = [TUI.Percent(30), TUI.Min(5), TUI.Percent(30)],
+    constraints = [TUI.Percent(30), TUI.Max(5), TUI.Percent(30)],
     orientation = :horizontal,
   )
   horizontal2 = TUI.Layout(;
     widgets = [block1, block2, block3],
-    constraints = [TUI.Min(5), TUI.Percent(30), TUI.Percent(30)],
+    constraints = [TUI.Max(5), TUI.Percent(30), TUI.Percent(30)],
     orientation = :horizontal,
   )
   TUI.Layout(;

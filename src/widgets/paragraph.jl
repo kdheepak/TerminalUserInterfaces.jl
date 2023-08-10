@@ -11,7 +11,7 @@ Base.@kwdef struct Paragraph
   end
 end
 
-make_words(sentence::String, style = Crayon()) = [Word(word, style) for word in split(sentence)]
+make_words(sentence::String, style = Crayon()) = [Word(word, style) for word in Base.split(sentence)]
 
 function render(p::Paragraph, area::Rect, buf::Buffer)
   render(p.block, area, buf)
@@ -19,11 +19,11 @@ function render(p::Paragraph, area::Rect, buf::Buffer)
 
   height(text_area) < 1 && return
 
-  lines = split(wrap(join([word.text for word in p.words], " "); width = Int(width(text_area))), "\n")
+  lines = Base.split(wrap(join([word.text for word in p.words], " "); width = Int(width(text_area))), "\n")
   p.number_of_lines[] = length(lines)
   word_count = 1
   for (i, line) in enumerate(lines)
-    words = split(line)
+    words = Base.split(line)
     if i < p.scroll || (i - p.scroll) >= height(text_area)
       for _ in words
         word_count += 1
