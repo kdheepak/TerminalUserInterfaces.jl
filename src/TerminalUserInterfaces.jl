@@ -6,7 +6,6 @@ using Crayons
 using TextWrap
 using Unicode
 using InlineTest
-using GLPK
 using KiwiConstraintSolver
 
 export Terminal

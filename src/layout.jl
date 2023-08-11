@@ -126,44 +126,56 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
     add_constraint(s, variables[i].h <= area.height)
     if c isa Auto
       if orientation == :horizontal
-        add_constraint(s, KiwiConstraintSolver.Constraint(variables[i].w - c.value, KiwiConstraintSolver.STRONG, :(==)))
+        add_constraint(s, @constraint variables[i].w == c.value - 1 strength = KiwiConstraintSolver.STRONG)
       else
-        add_constraint(s, KiwiConstraintSolver.Constraint(variables[i].h - c.value, KiwiConstraintSolver.STRONG, :(==)))
+        add_constraint(s, @constraint variables[i].h == c.value - 1 strength = KiwiConstraintSolver.STRONG)
       end
     elseif c isa Percent
       if orientation == :horizontal
         add_constraint(
           s,
-          KiwiConstraintSolver.Constraint(variables[i].w - (c.value ÷ width(area)), KiwiConstraintSolver.MEDIUM, :(==)),
+          @constraint variables[i].w == (c.value * width(area) ÷ 100) - 1 strength = KiwiConstraintSolver.MEDIUM
         )
       else
         add_constraint(
           s,
-          KiwiConstraintSolver.Constraint(
-            variables[i].h - (c.value ÷ height(area)),
-            KiwiConstraintSolver.MEDIUM,
-            :(==),
-          ),
+          @constraint variables[i].h == (c.value * height(area) ÷ 100) - 1 strength = KiwiConstraintSolver.MEDIUM
         )
       end
     elseif c isa Fixed
       if orientation == :horizontal
-        add_constraint(s, variables[i].w == c.value)
+        add_constraint(s, variables[i].w == c.value - 1)
       else
-        add_constraint(s, variables[i].h == c.value)
+        add_constraint(s, variables[i].h == c.value - 1)
       end
     elseif c isa Min
       if orientation == :horizontal
-        add_constraint(s, variables[i].w >= c.value)
+        add_constraint(s, variables[i].w >= c.value - 1)
       else
-        add_constraint(s, variables[i].h >= c.value)
+        add_constraint(s, variables[i].h >= c.value - 1)
       end
     elseif c isa Max
       if orientation == :horizontal
-        add_constraint(s, variables[i].w <= c.value)
+        add_constraint(s, variables[i].w <= c.value - 1)
       else
-        add_constraint(s, variables[i].h <= c.value)
+        add_constraint(s, variables[i].h <= c.value - 1)
       end
+    end
+  end
+  for (i, c) in enumerate(layout.constraints)
+    if i == 1
+      continue
+    end
+    if orientation == :horizontal
+      add_constraint(
+        s,
+        @constraint variables[i].x == variables[i-1].x + variables[i-1].w + 1 strength = KiwiConstraintSolver.MEDIUM
+      )
+    else
+      add_constraint(
+        s,
+        @constraint variables[i].y == variables[i-1].y + variables[i-1].h + 1 strength = KiwiConstraintSolver.MEDIUM
+      )
     end
   end
   if orientation == :horizontal

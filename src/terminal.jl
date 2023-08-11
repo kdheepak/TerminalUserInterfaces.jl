@@ -251,15 +251,15 @@ area(t::Terminal) = t.terminal_size[]
 
 function tui(f::Function; flags...)
   r = nothing
-  err = nothing
   tui(true; flags...)
   try
     r = f()
   catch err
+    tui(false; flags...)
+    rethrow(err)
   finally
     tui(false; flags...)
   end
-  !isnothing(err) && throw(err)
   return r
 end
 
