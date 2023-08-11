@@ -76,6 +76,9 @@ function render(table::Table, area::Rect, buf::Buffer)
     return
   end
 
+  # Set initial style
+  set(buf, area, table.style)
+
   # Calculate column widths and row bounds
   column_widths = get_columns_widths(table, width(area))
   start_row, stop_row = get_row_bounds(table, height(area))
@@ -86,7 +89,7 @@ function render(table::Table, area::Rect, buf::Buffer)
   end
 
   # Create the table area inside the block (if exists) or the full area
-  table_area = isnothing(table.block) ? area : inner(table.block, area)
+  table_area = !isnothing(table.block) ? inner(table.block, area) : area
 
   x, y = left(table_area), top(table_area)
 
@@ -110,20 +113,39 @@ function render(table::Table, area::Rect, buf::Buffer)
   # Render rows within start and stop bounds
   for i in start_row+1:stop_row
     row = table.rows[i]
-    render_row(row, x, y, column_widths, buf)
+    is_selected = i == table.state.selected
+    render_row(row, x, y, column_widths, buf, is_selected, table.highlight_symbol)
     y += total_height(row)
   end
 end
 
 # Helper function to render a row
-function render_row(row::Row, x::Int, y::Int, column_widths::Vector{Int}, buf::Buffer)
+function render_row(
+  row::Row,
+  x::Int,
+  y::Int,
+  column_widths::Vector{Int},
+  buf::Buffer,
+  is_selected::Bool = false,
+  highlight_symbol::Union{Nothing,String} = nothing,
+)
   x_offset = x
   for (i, cell) in enumerate(row.cells)
-    # Render cell (you may need to define this part, depending on how you want to display cells)
-    # Example:
-    set(buf, x_offset, y, cell.content, cell.style)
+    # Highlight if row is selected and highlight symbol is provided
+    if is_selected && !isnothing(highlight_symbol)
+      set(buf, x_offset, y, highlight_symbol, cell.style)
+      x_offset += width(highlight_symbol)
+    end
+    render_cell(buf, cell, Rect(; x = x_offset, y = y, width = column_widths[i], height = row.height))
     x_offset += column_widths[i]
+  end
+  if is_selected
+    set(buf, Rect(; x = x, y = y, width = sum(column_widths), height = row.height), table.highlight_style)
   end
 end
 
+function render_cell(buf::Buffer, cell::Cell, area::Rect)
+  set(buf, area, cell.style)
+  set(buf, left(area), top(area), Base.split(cell.content, '\n'))
+end
 
