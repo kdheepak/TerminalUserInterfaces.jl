@@ -8,10 +8,23 @@ using Random
 end
 
 function TUI.view(m::Model)
-  cells = [TUI.Cell(; content = "Hello"), TUI.Cell(; content = "World")]
-  rows = [TUI.Row(; cells), TUI.Row(; cells), TUI.Row(; cells)]
+  cells = [TUI.Cell(; content="Hello"), TUI.Cell(; content="World")]
+  header = TUI.Row(; cells=[
+    TUI.Cell(; content="Column1"),
+    TUI.Cell(; content="Column2"),
+  ])
+  rows = [
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+    TUI.Row(; cells),
+  ]
   widths = [TUI.Auto(50), TUI.Auto(50)]
-  TUI.Table(; rows, widths)
+  TUI.Table(; rows, widths, header)
 end
 
 function TUI.update!(m::Model, evt::TUI.KeyEvent)

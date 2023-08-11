@@ -1,18 +1,16 @@
 # Rect
 
-struct Margin
+@kwdef struct Margin
   vertical::Int
   horizontal::Int
 end
 
-struct Rect
-  x::Int
-  y::Int
-  width::Int
-  height::Int
+@kwdef struct Rect
+  x::Int = 1
+  y::Int = 1
+  width::Int = 1
+  height::Int = 1
 end
-
-Rect() = Rect(1, 1, 1, 1)
 
 function Rect(rect::Rect, margin::Margin)
   if rect.width < 2 * margin.horizontal || rect.height < 2 * margin.vertical

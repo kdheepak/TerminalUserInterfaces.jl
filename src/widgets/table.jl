@@ -17,10 +17,11 @@ end
   rows::Vector{Row}
   widths::Vector{Constraint}
   state::TableState = TableState(; offset = 1, selected = nothing)
-  block::Union{Nothing,Block} = nothing
+  block::Union{Nothing,Block} = Block()
   style::Crayon = Crayon()
-  column_spacing::Int = 5
+  column_spacing::Int = 0
   header::Union{Row,Nothing} = nothing
+  header_style::Crayon = Crayon()
   highlight_symbol::Union{String,Nothing} = nothing
   highlight_style::Crayon = Crayon()
 end
@@ -91,6 +92,17 @@ function render(table::Table, area::Rect, buf::Buffer)
 
   # Optionally render the header row
   if !isnothing(table.header)
+    max_header_height = min(table_area.height, total_height(table.header))
+    set(
+      buf,
+      Rect(;
+        x = left(table_area),
+        y = top(table_area),
+        width = width(table_area),
+        height = min(table_area.height, table.header.height),
+      ),
+      table.header.style,
+    )
     render_row(table.header, x, y, column_widths, buf)
     y += total_height(table.header)
   end
