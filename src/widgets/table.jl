@@ -33,7 +33,6 @@ function get_columns_widths(table::Table, max_width::Int)
     push!(constraints, Min(table.column_spacing))
   end
   chunks = split(Horizontal(; constraints), Rect(0, 0, max_width, 1))
-  @info (; chunks)
   return map(c -> c.width, chunks[1:2:end])
 end
 
