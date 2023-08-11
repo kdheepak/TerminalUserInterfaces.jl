@@ -42,7 +42,9 @@ function TUI.init!(m, _)
 end
 
 function TUI.update!(m::Model, evt::TUI.KeyEvent)
-  m.quit = true
+  if TUI.keypress(evt) == "q"
+    m.quit = true
+  end
 end
 
 function TUI.view(m::Model)
@@ -51,13 +53,13 @@ function TUI.view(m::Model)
   block3 = TUI.Block(; title = "Block 3")
 
   horizontal1 = TUI.Layout(;
-    widgets = [block1, block2],
-    constraints = [TUI.Percent(50), TUI.Percent(50)],
+    widgets = [block1, block2, block3],
+    constraints = [TUI.Percent(30), TUI.Min(5), TUI.Percent(30)],
     orientation = :horizontal,
   )
   horizontal2 = TUI.Layout(;
     widgets = [block1, block2, block3],
-    constraints = [TUI.Max(5), TUI.Percent(30), TUI.Percent(30)],
+    constraints = [TUI.Min(5), TUI.Percent(30), TUI.Percent(30)],
     orientation = :horizontal,
   )
   TUI.Layout(;

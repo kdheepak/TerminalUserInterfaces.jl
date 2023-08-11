@@ -16,7 +16,7 @@ function render(layout::Layout, area::Rect, buf::Buffer)
     split(Horizontal(; constraints = layout.constraints), area)
   end
 
-  for (widget, rect) in zip(layout.widgets, rects)
+  for (i, (widget, rect)) in enumerate(zip(layout.widgets, rects))
     render(widget, rect, buf)
   end
 end
