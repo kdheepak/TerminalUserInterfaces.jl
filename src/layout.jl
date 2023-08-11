@@ -300,6 +300,6 @@ end
   constraints = [Percent(75), Min(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
-  @test_broken width(r1) == 50 # expected 50 but getting 0
-  @test_broken width(r2) == 50 # expected 50 but getting 100
+  @test width(r1) == 50
+  @test width(r2) == 50
 end
