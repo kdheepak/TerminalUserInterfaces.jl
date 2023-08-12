@@ -8,11 +8,16 @@ using Random
 end
 
 function TUI.view(m::Model)
-  cells = [TUI.Cell(; content="Hello"), TUI.Cell(; content="World")]
-  header = TUI.Row(; cells=[
-    TUI.Cell(; content="Column1"),
-    TUI.Cell(; content="Column2"),
-  ])
+  cells = [
+    TUI.Cell(; content = "Hello", style = TUI.Crayon(; foreground = :black, background = :white)),
+    TUI.Cell(; content = "World", style = TUI.Crayon(; foreground = :black, background = :white)),
+  ]
+  header = TUI.Row(;
+    cells = [
+      TUI.Cell(; content = "Column1", style = TUI.Crayon(; foreground = :black, background = :white)),
+      TUI.Cell(; content = "Column2", style = TUI.Crayon(; foreground = :black, background = :white)),
+    ],
+  )
   rows = [
     TUI.Row(; cells),
     TUI.Row(; cells),

@@ -1,7 +1,6 @@
 @kwdef struct Row
   cells::Vector{Cell}
   height::Int = 3
-  style::Crayon = Crayon()
   bottom_margin::Int = 0
 end
 
@@ -21,7 +20,6 @@ end
   style::Crayon = Crayon()
   column_spacing::Int = 0
   header::Union{Row,Nothing} = nothing
-  header_style::Crayon = Crayon()
   highlight_symbol::Union{String,Nothing} = nothing
   highlight_style::Crayon = Crayon()
 end
@@ -95,16 +93,6 @@ function render(table::Table, area::Rect, buf::Buffer)
   # Optionally render the header row
   if !isnothing(table.header)
     max_header_height = min(table_area.height, total_height(table.header))
-    set(
-      buf,
-      Rect(;
-        x = left(table_area),
-        y = top(table_area),
-        width = width(table_area),
-        height = min(table_area.height, table.header.height),
-      ),
-      table.header.style,
-    )
     render_row(table.header, x, y, column_widths, buf)
     y += total_height(table.header)
   end
@@ -135,16 +123,7 @@ function render_row(
       set(buf, x_offset, y, highlight_symbol, cell.style)
       x_offset += width(highlight_symbol)
     end
-    render_cell(buf, cell, Rect(; x = x_offset, y = y, width = column_widths[i], height = row.height))
+    set(buf, Rect(; x = x_offset, y = y, width = column_widths[i], height = row.height), cell)
     x_offset += column_widths[i]
   end
-  if is_selected
-    set(buf, Rect(; x = x, y = y, width = sum(column_widths), height = row.height), table.highlight_style)
-  end
 end
-
-function render_cell(buf::Buffer, cell::Cell, area::Rect)
-  set(buf, area, cell.style)
-  set(buf, left(area), top(area), Base.split(cell.content, '\n'))
-end
-
