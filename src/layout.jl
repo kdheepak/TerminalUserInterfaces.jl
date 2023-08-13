@@ -196,14 +196,9 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   rects
 end
 
-@testset "layout-rects" begin
-  constraints = [Fixed(50), Fixed(50)]
-  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  @test width(Rect(1, 1, 100, 1)) == 100
-  @test width(r1) == 50
-  @test width(r2) == 50
 
-  constraints = [Fixed(50), Auto(50)]
+@testset "layout-rects-fixed" begin
+  constraints = [Fixed(50), Fixed(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
   @test width(r1) == 50
@@ -216,7 +211,9 @@ end
   @test width(r2) == 25
   @test width(r3) == 25
   @test width(r4) == 25
+end
 
+@testset "layout-rects-min" begin
   constraints = [Min(5), Min(5)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
@@ -236,6 +233,14 @@ end
   @test width(r2) == 25
   @test width(r3) == 25
   @test width(r4) == 25
+end
+
+@testset "layout-rects-mixed" begin
+  constraints = [Fixed(50), Auto(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
 
   constraints = [Min(5), Auto(50), Min(15), Min(15)]
   r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
