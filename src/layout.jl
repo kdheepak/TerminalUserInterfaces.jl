@@ -196,7 +196,6 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   rects
 end
 
-
 @testset "layout-rects-fixed" begin
   constraints = [Fixed(50), Fixed(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
