@@ -295,15 +295,15 @@ end
   @test width(r1) == 50
   @test width(r2) == 50
 
-  # constraints = [Max(100), Max(50)]
-  # r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  # @test width(Rect(1, 1, 100, 1)) == 100
-  # @test width(r1) == 50
-  # @test width(r2) == 50
-  #
-  # constraints = [Percent(75), Min(50)]
-  # r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  # @test width(Rect(1, 1, 100, 1)) == 100
-  # @test width(r1) == 50
-  # @test width(r2) == 50
+  constraints = [Max(100), Max(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Percent(75), Min(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
 end
