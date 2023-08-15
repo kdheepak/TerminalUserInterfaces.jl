@@ -28,6 +28,19 @@ end
   highlight_style::Crayon = Crayon()
 end
 
+
+function Table(table)
+  columnnames = Tables.columnnames(Tables.columns(table))
+  N = length(columnnames)
+  header = Row(; data = [Datum(; content = string(col)) for col in columnnames])
+  rows = map(Tables.rows(table)) do row
+    Row(; data = [Datum(; content = string(item)) for item in row])
+  end
+  widths = [Percent(100 ÷ N) for _ in 1:N]
+  Table(; rows, widths, header)
+end
+
+
 function get_columns_widths(table::Table, max_width::Int)
   constraints = Constraint[]
   for constraint in table.widths
