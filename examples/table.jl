@@ -8,27 +8,25 @@ using Random
 end
 
 function TUI.view(m::Model)
-  cells = [
-    TUI.Cell(; content = "Hello", style = TUI.Crayon(; foreground = :black, background = :white)),
-    TUI.Cell(; content = "World", style = TUI.Crayon(; foreground = :black, background = :white)),
-  ]
+  data = [TUI.Datum(; content = "Hello"), TUI.Datum(; content = "World"), TUI.Datum(; content = "FSFDS")]
   header = TUI.Row(;
-    cells = [
-      TUI.Cell(; content = "Column1", style = TUI.Crayon(; foreground = :black, background = :white)),
-      TUI.Cell(; content = "Column2", style = TUI.Crayon(; foreground = :black, background = :white)),
+    data = [
+      TUI.Datum(; content = "Column1", style = TUI.Crayon(; foreground = :black, background = :white)),
+      TUI.Datum(; content = "Column2", style = TUI.Crayon(; foreground = :black, background = :white)),
+      TUI.Datum(; content = "Column3", style = TUI.Crayon(; foreground = :black, background = :white)),
     ],
   )
   rows = [
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
-    TUI.Row(; cells),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
+    TUI.Row(; data),
   ]
-  widths = [TUI.Auto(50), TUI.Auto(50)]
+  widths = [TUI.Percent(33), TUI.Percent(33), TUI.Percent(33)]
   TUI.Table(; rows, widths, header)
 end
 

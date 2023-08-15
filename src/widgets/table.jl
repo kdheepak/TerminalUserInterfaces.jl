@@ -1,5 +1,10 @@
+@kwdef struct Datum
+  content::String = ""
+  style::Crayon = Crayon()
+end
+
 @kwdef struct Row
-  cells::Vector{Cell}
+  data::Vector{Datum}
   height::Int = 3
   bottom_margin::Int = 0
 end
@@ -117,13 +122,13 @@ function render_row(
   highlight_symbol::Union{Nothing,String} = nothing,
 )
   x_offset = x
-  for (i, cell) in enumerate(row.cells)
+  for (i, datum) in enumerate(row.data)
     # Highlight if row is selected and highlight symbol is provided
     if is_selected && !isnothing(highlight_symbol)
-      set(buf, x_offset, y, highlight_symbol, cell.style)
+      set(buf, x_offset, y, highlight_symbol)
       x_offset += width(highlight_symbol)
     end
-    set(buf, Rect(; x = x_offset, y = y, width = column_widths[i], height = row.height), cell)
+    set(buf, x_offset, y, datum.content, datum.style)
     x_offset += column_widths[i]
   end
 end

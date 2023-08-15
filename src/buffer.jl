@@ -1,6 +1,6 @@
 
-@kwdef struct Cell{T}
-  content::T
+@kwdef struct Cell
+  content::Char
   style::Crayons.Crayon = Crayon()
 end
 
@@ -39,15 +39,10 @@ function set(buffer::Buffer, area::Rect, style::Crayons.Crayon)
   end
 end
 
-function set(buffer::Buffer, area::Rect, cell::Cell{Char})
+function set(buffer::Buffer, area::Rect, cell::Cell)
   for j in area.y:area.height, i in area.x:area.width
     set(buffer, i, j, cell)
   end
-end
-
-function set(buf::Buffer, area::Rect, cell::Cell)
-  set(buf, area, cell.style)
-  set(buf, left(area), top(area), Base.split(cell.content, '\n'))
 end
 
 function set(buffer::Buffer, col::Integer, row::Integer, style::Crayons.Crayon)
@@ -91,7 +86,7 @@ function set(buffer::Buffer, col::Integer, row::Integer, c::Char, style::Crayons
   set(buffer, col, row, Cell(c, style))
 end
 
-function set(buffer::Buffer, col::Integer, row::Integer, c::Cell{Char})
+function set(buffer::Buffer, col::Integer, row::Integer, c::Cell)
   row = min(row, Base.size(buffer.content, 1))
   col = min(col, Base.size(buffer.content, 2))
   buffer.content[row, col] = c
