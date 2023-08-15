@@ -263,12 +263,20 @@ function tui(f::Function; flags...)
   return r
 end
 
-function tui(switch = true; log = true, enhance_keyboard = Sys.iswindows() ? false : true, mouse = false, flush = true)
+function tui(
+  switch = true;
+  log = true,
+  enhance_keyboard = Sys.iswindows() ? false : true,
+  mouse = false,
+  flush = true,
+  alternate_screen = true,
+  raw_mode = true,
+)
   flush && Crossterm.flush()
   if switch
     log && Logger.initialize()
-    Crossterm.raw_mode(true)
-    Crossterm.alternate_screen(true)
+    raw_mode && Crossterm.raw_mode(true)
+    alternate_screen && Crossterm.alternate_screen(true)
     mouse && Crossterm.mouse_capture(true)
     enhance_keyboard && Crossterm.enhance_keyboard(true)
     Crossterm.hide()
@@ -276,8 +284,8 @@ function tui(switch = true; log = true, enhance_keyboard = Sys.iswindows() ? fal
     Crossterm.show()
     enhance_keyboard && Crossterm.enhance_keyboard(false)
     mouse && Crossterm.mouse_capture(false)
-    Crossterm.alternate_screen(false)
-    Crossterm.raw_mode(false)
+    alternate_screen && Crossterm.alternate_screen(false)
+    raw_mode && Crossterm.raw_mode(false)
     log && Logger.reset()
   end
   flush && Crossterm.flush()

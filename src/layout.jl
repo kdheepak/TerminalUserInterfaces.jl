@@ -118,29 +118,7 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   ]
   s = Solver()
   for (i, c) in enumerate(layout.constraints)
-    add_constraint(s, variables[i].x >= area.x)
-    add_constraint(s, variables[i].y >= area.y)
-    add_constraint(s, variables[i].w <= area.width)
-    add_constraint(s, variables[i].h <= area.height)
-    if c isa Auto
-      if orientation == :horizontal
-        add_constraint(s, @constraint variables[i].w == c.value strength = KiwiConstraintSolver.STRONG)
-      else
-        add_constraint(s, @constraint variables[i].h == c.value strength = KiwiConstraintSolver.STRONG)
-      end
-    elseif c isa Percent
-      if orientation == :horizontal
-        add_constraint(
-          s,
-          @constraint variables[i].w == (c.value * width(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
-        )
-      else
-        add_constraint(
-          s,
-          @constraint variables[i].h == (c.value * height(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
-        )
-      end
-    elseif c isa Fixed
+    if c isa Fixed
       if orientation == :horizontal
         add_constraint(s, variables[i].w == c.value)
       else
@@ -158,22 +136,49 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
       else
         add_constraint(s, variables[i].h <= c.value)
       end
+    elseif c isa Auto
+      if orientation == :horizontal
+        add_constraint(s, @constraint variables[i].w == c.value strength = KiwiConstraintSolver.STRONG)
+      else
+        add_constraint(s, @constraint variables[i].h == c.value strength = KiwiConstraintSolver.STRONG)
+      end
+    elseif c isa Percent
+      if orientation == :horizontal
+        add_constraint(
+          s,
+          @constraint variables[i].w == (c.value * width(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
+        )
+      else
+        add_constraint(
+          s,
+          @constraint variables[i].h == (c.value * height(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
+        )
+      end
     end
   end
   for (i, c) in enumerate(layout.constraints)
     if i == 1
-      continue
-    end
-    if orientation == :horizontal
-      add_constraint(
-        s,
-        @constraint variables[i].x == variables[i-1].x + variables[i-1].w + 1 strength = KiwiConstraintSolver.MEDIUM
-      )
+      add_constraint(s, variables[i].x >= area.x)
+      add_constraint(s, variables[i].y >= area.y)
     else
-      add_constraint(
-        s,
-        @constraint variables[i].y == variables[i-1].y + variables[i-1].h + 1 strength = KiwiConstraintSolver.MEDIUM
-      )
+      if orientation == :horizontal
+        add_constraint(s, variables[i].x == variables[i-1].x + variables[i-1].w + 1)
+      else
+        add_constraint(s, variables[i].y == variables[i-1].y + variables[i-1].h + 1)
+      end
+    end
+    if i == length(layout.constraints)
+      if orientation == :horizontal
+        add_constraint(
+          s,
+          @constraint variables[i].x + variables[i].w == width(area) strength = KiwiConstraintSolver.STRONG
+        )
+      else
+        add_constraint(
+          s,
+          @constraint variables[i].y + variables[i].h == height(area) strength = KiwiConstraintSolver.STRONG
+        )
+      end
     end
   end
   if orientation == :horizontal
@@ -192,8 +197,31 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
     end
   end
   update_variables(s)
-  rects = [Rect(round(v.x.value), round(v.y.value), round(v.w.value), round(v.h.value)) for v in variables]
+  rects = if orientation == :horizontal
+    [Rect(round(v.x.value), top(area), round(v.w.value), height(area)) for v in variables]
+  else
+    [Rect(left(area), round(v.y.value), width(area), round(v.h.value)) for v in variables]
+  end
   rects
+end
+
+function testing()
+  # TUI.tui(; alternate_screen = false) do
+  #   t = TUI.Terminal()
+  #   TUI.render(t, TUI.Block(), r1)
+  #   TUI.render(t, TUI.Block(), r2)
+  #   TUI.render(t, TUI.Block(), r3)
+  #   TUI.draw(t)
+  # end
+end
+
+@testset "layout-rects-gaps" begin
+  target = Rect(; x = 2, y = 2, width = 10, height = 10)
+  constraints = [Percent(10), Max(5), Min(1)]
+  r1, r2, r3 = split(Horizontal(constraints), target)
+  @test r1 == Rect(; x = 2, y = 2, width = 1, height = 10)
+  @test r2 == Rect(; x = 4, y = 2, width = 4, height = 10)
+  @test r3 == Rect(; x = 10, y = 2, width = 4, height = 10)
 end
 
 @testset "layout-rects-fixed" begin

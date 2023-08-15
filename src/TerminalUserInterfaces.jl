@@ -10,6 +10,8 @@ using KiwiConstraintSolver
 
 export Terminal
 
+const TUI = TerminalUserInterfaces
+
 include("logger.jl")
 include("symbols.jl")
 include("layout.jl")
