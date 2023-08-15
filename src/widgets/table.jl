@@ -11,16 +11,15 @@ end
 
 total_height(row::Row) = row.height + row.bottom_margin
 
-
 @kwdef mutable struct TableState
-  offset::Int
-  selected::Union{Int,Nothing}
+  offset::Int = 1
+  selected::Union{Int,Nothing} = nothing
 end
 
 @kwdef struct Table
   rows::Vector{Row}
   widths::Vector{Constraint}
-  state::TableState = TableState(; offset = 1, selected = nothing)
+  state::TableState = TableState()
   block::Union{Nothing,Block} = Block()
   style::Crayon = Crayon()
   column_spacing::Int = 0

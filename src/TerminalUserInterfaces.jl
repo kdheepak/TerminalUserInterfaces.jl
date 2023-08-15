@@ -7,6 +7,7 @@ using TextWrap
 using Unicode
 using InlineTest
 using KiwiConstraintSolver
+using Tables
 
 export Terminal
 
