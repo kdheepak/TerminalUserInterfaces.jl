@@ -12,7 +12,6 @@ end
 total_height(row::Row) = row.height + row.bottom_margin
 
 @kwdef mutable struct TableState
-  offset::Int = 1
   selected::Union{Int,Nothing} = nothing
 end
 
@@ -25,11 +24,14 @@ end
   column_spacing::Int = 0
   column_widths::Vector{Int} = []
   header::Union{Row,Nothing} = nothing
-  highlight_symbol::Union{String,Nothing} = nothing
+  highlight_symbol::Union{String,Nothing} = ">"
   highlight_style::Crayon = Crayon()
 end
 
 
+"""
+Any table that implements `Tables.jl` interface
+"""
 function Table(table)
   columnnames = Tables.columnnames(Tables.columns(table))
   N = length(columnnames)
@@ -41,6 +43,33 @@ function Table(table)
   Table(; rows, widths, header)
 end
 
+function next(table::Table)
+  selection = if !isnothing(table.state.selected)
+    i = table.state.selected + 1
+    if i >= length(table.rows)
+      1
+    else
+      i
+    end
+  else
+    1
+  end
+  table.state.selected = selection
+end
+
+function previous(table::Table)
+  selection = if !isnothing(table.state.selected)
+    i = table.state.selected - 1
+    if i <= 1
+      1
+    else
+      i
+    end
+  else
+    1
+  end
+  table.state.selected = selection
+end
 
 function get_columns_widths(table::Table, max_width::Int)
   constraints = Constraint[]
@@ -53,11 +82,10 @@ function get_columns_widths(table::Table, max_width::Int)
 end
 
 function get_row_bounds(table::Table, max_height::Int)
-  offset = min(table.state.offset, length(table.rows) - 1)
-  start = offset
-  stop = offset
+  start = 1
+  stop = 1
   height = 0
-  for item in table.rows[start+1:end]
+  for item in table.rows
     if height + item.height >= max_height
       break
     end
@@ -65,10 +93,11 @@ function get_row_bounds(table::Table, max_height::Int)
     stop += 1
   end
   selected = isnothing(table.state.selected) ? 1 : min(table.state.selected, length(table.rows))
-  while selected >= stop
+  @debug "" selected start stop
+  while selected > stop
     height += total_height(table.rows[stop+1])
     stop += 1
-    while height > max_height
+    while height >= max_height
       height -= total_height(table.rows[start+1])
       start += 1
     end
@@ -76,7 +105,7 @@ function get_row_bounds(table::Table, max_height::Int)
   while selected < start
     start -= 1
     height += total_height(table.rows[start+1])
-    while height > max_height
+    while height >= max_height
       stop -= 1
       height -= total_height(table.rows[stop+1])
     end
@@ -124,31 +153,19 @@ function render(table::Table, area::Rect, buf::Buffer)
 
   # Render rows within start and stop bounds
   @debug "Before rows" start_row stop_row
-  for i in start_row+1:stop_row
+  for i in start_row:stop_row-1
     row = table.rows[i]
     is_selected = i == table.state.selected
-    render_row(row, x, y, column_widths, buf, is_selected, table.highlight_symbol)
+    render_row(row, x, y, column_widths, buf)
     y += total_height(row)
   end
 end
 
 # Helper function to render a row
-function render_row(
-  row::Row,
-  x::Int,
-  y::Int,
-  column_widths::Vector{Int},
-  buf::Buffer,
-  is_selected::Bool = false,
-  highlight_symbol::Union{Nothing,String} = nothing,
-)
+function render_row(row::Row, x::Int, y::Int, column_widths::Vector{Int}, buf::Buffer)
   x_offset = x
   for (i, datum) in enumerate(row.data)
     # Highlight if row is selected and highlight symbol is provided
-    if is_selected && !isnothing(highlight_symbol)
-      set(buf, x_offset, y, highlight_symbol)
-      x_offset += width(highlight_symbol)
-    end
     set(buf, x_offset, y, datum.content, datum.style)
     x_offset += column_widths[i]
   end

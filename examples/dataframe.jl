@@ -18,18 +18,14 @@ function TUI.update!(m::Model, evt::TUI.KeyEvent)
   if TUI.keypress(evt) == "q"
     m.quit = true
   elseif TUI.keypress(evt) == "j"
-    m.table.state.offset += 1
-    m.table.state.offset = min(length(m.table.rows), m.table.state.offset)
-    m.table.state.selected = m.table.state.offset
+    TUI.next(m.table)
   elseif TUI.keypress(evt) == "k"
-    m.table.state.offset -= 1
-    m.table.state.offset = max(1, m.table.state.offset)
-    m.table.state.selected = m.table.state.offset
+    TUI.previous(m.table)
   end
 end
 
 function main()
-  TUI.app(Model(); wait = 0)
+  TUI.app(Model(); wait = 1)
 end
 
 main()
