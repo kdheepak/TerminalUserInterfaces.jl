@@ -34,12 +34,18 @@ Any table that implements `Tables.jl` interface
 """
 function Table(table)
   columnnames = Tables.columnnames(Tables.columns(table))
+  pushfirst!(columnnames, Symbol(""))
   N = length(columnnames)
   header = Row(; data = [Datum(; content = string(col)) for col in columnnames], height = 2)
   rows = map(Tables.rows(table)) do row
-    Row(; data = [Datum(; content = string(item)) for item in row])
+    data = [Datum(; content = "")]
+    for item in row
+      push!(data, Datum(; content = string(item)))
+    end
+    Row(; data)
   end
-  widths = [Percent(100 ÷ N) for _ in 1:N]
+  widths = Any[Percent(100 ÷ (N - 1)) for _ in 1:N]
+  widths[1] = Min(5)
   Table(; rows, widths, header)
 end
 
@@ -132,7 +138,7 @@ function render(table::Table, area::Rect, buf::Buffer)
   end
   header_height = isnothing(table.header) ? 0 : (table.header.height)
   @debug "Calculate start_row stop_row"
-  start_row, stop_row = get_row_bounds(table, height(area) - (header_height + 1))
+  start_row, stop_row = get_row_bounds(table, height(area) - (header_height + 2))
 
   # Optionally render block around the table
   if !isnothing(table.block)
@@ -147,26 +153,30 @@ function render(table::Table, area::Rect, buf::Buffer)
   # Optionally render the header row
   if !isnothing(table.header)
     max_header_height = min(table_area.height, total_height(table.header))
-    render_row(table.header, x, y, column_widths, buf)
+    render_row(table.header, x, y, column_widths, buf, false)
     y += total_height(table.header)
   end
 
   # Render rows within start and stop bounds
   @debug "Before rows" start_row stop_row
-  for i in start_row:stop_row-1
+  for i in start_row:stop_row
     row = table.rows[i]
     is_selected = i == table.state.selected
-    render_row(row, x, y, column_widths, buf)
+    render_row(row, x, y, column_widths, buf, is_selected)
     y += total_height(row)
   end
 end
 
 # Helper function to render a row
-function render_row(row::Row, x::Int, y::Int, column_widths::Vector{Int}, buf::Buffer)
+function render_row(row::Row, x::Int, y::Int, column_widths::Vector{Int}, buf::Buffer, is_selected::Bool)
   x_offset = x
   for (i, datum) in enumerate(row.data)
     # Highlight if row is selected and highlight symbol is provided
-    set(buf, x_offset, y, datum.content, datum.style)
+    if is_selected && i == 1
+      set(buf, x_offset, y, " > ", datum.style)
+    else
+      set(buf, x_offset, y, datum.content, datum.style)
+    end
     x_offset += column_widths[i]
   end
 end
