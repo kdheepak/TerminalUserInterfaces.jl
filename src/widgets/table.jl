@@ -67,12 +67,12 @@ function previous(table::Table)
   selection = if !isnothing(table.state.selected)
     i = table.state.selected - 1
     if i <= 1
-      1
+      length(table.rows)
     else
       i
     end
   else
-    1
+    length(table.rows)
   end
   table.state.selected = selection
 end
