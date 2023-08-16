@@ -13,7 +13,7 @@ using Dates
 
 # Define constants
 const DEFAULT_LOGGER = current_logger() # Refers to the current logger
-const DATE_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SS" # Specifies the format to use for dates in log messages
+const DATE_FORMAT = dateformat"yyyy-mm-ddTHH:MM:SS.ssss" # Specifies the format to use for dates in log messages
 const PARENT_MODULE = parentmodule(@__MODULE__) # Refers to the parent module of the current module
 const LOG_FOLDER =
   Ref(isnothing(pkgdir(PARENT_MODULE)) ? joinpath(@__DIR__, "log") : joinpath(pkgdir(PARENT_MODULE), "log")) # Specifies the folder where log files will be saved

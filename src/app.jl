@@ -18,20 +18,20 @@ render(m::Model, r::Rect, buf::Buffer) =
     render(w, r, buf)
   end
 
-function app(m; fps = 30)
+function app(m; wait = 1 / 30)
   tui() do
     @debug "Creating terminal"
     t = Terminal()
     init!(m, t)
     while !should_quit(m)
       @debug "Getting event"
-      evt = try_get_event(t; wait = 1 / fps)
+      evt = try_get_event(t; wait)
       !isnothing(evt) && @debug "Got event" event = evt
       @debug "Updating model"
       update!(m, evt)
-      @debug "Rendering model"
+      @info "Rendering model"
       render(t, m)
-      @debug "Drawing model"
+      @info "Drawing model"
       draw(t)
     end
     @debug "End"

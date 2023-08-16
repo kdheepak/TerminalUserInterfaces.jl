@@ -5,7 +5,7 @@ end
 
 @kwdef struct Row
   data::Vector{Datum}
-  height::Int = 3
+  height::Int = 1
   bottom_margin::Int = 0
 end
 
@@ -16,13 +16,14 @@ total_height(row::Row) = row.height + row.bottom_margin
   selected::Union{Int,Nothing} = nothing
 end
 
-@kwdef struct Table
+@kwdef mutable struct Table
   rows::Vector{Row}
   widths::Vector{Constraint}
   state::TableState = TableState()
   block::Union{Nothing,Block} = Block()
   style::Crayon = Crayon()
   column_spacing::Int = 0
+  column_widths::Vector{Int} = []
   header::Union{Row,Nothing} = nothing
   highlight_symbol::Union{String,Nothing} = nothing
   highlight_style::Crayon = Crayon()
@@ -32,7 +33,7 @@ end
 function Table(table)
   columnnames = Tables.columnnames(Tables.columns(table))
   N = length(columnnames)
-  header = Row(; data = [Datum(; content = string(col)) for col in columnnames])
+  header = Row(; data = [Datum(; content = string(col)) for col in columnnames], height = 2)
   rows = map(Tables.rows(table)) do row
     Row(; data = [Datum(; content = string(item)) for item in row])
   end
@@ -57,13 +58,12 @@ function get_row_bounds(table::Table, max_height::Int)
   stop = offset
   height = 0
   for item in table.rows[start+1:end]
-    if height + item.height > max_height
+    if height + item.height >= max_height
       break
     end
     height += total_height(item)
     stop += 1
   end
-
   selected = isnothing(table.state.selected) ? 1 : min(table.state.selected, length(table.rows))
   while selected >= stop
     height += total_height(table.rows[stop+1])
@@ -94,8 +94,16 @@ function render(table::Table, area::Rect, buf::Buffer)
   set(buf, area, table.style)
 
   # Calculate column widths and row bounds
-  column_widths = get_columns_widths(table, width(area))
-  start_row, stop_row = get_row_bounds(table, height(area))
+  @debug "Calculate widths"
+  if length(table.column_widths) == 0
+    column_widths = get_columns_widths(table, width(area))
+    table.column_widths = column_widths
+  else
+    column_widths = table.column_widths
+  end
+  header_height = isnothing(table.header) ? 0 : (table.header.height)
+  @debug "Calculate start_row stop_row"
+  start_row, stop_row = get_row_bounds(table, height(area) - (header_height + 1))
 
   # Optionally render block around the table
   if !isnothing(table.block)
@@ -115,6 +123,7 @@ function render(table::Table, area::Rect, buf::Buffer)
   end
 
   # Render rows within start and stop bounds
+  @debug "Before rows" start_row stop_row
   for i in start_row+1:stop_row
     row = table.rows[i]
     is_selected = i == table.state.selected
