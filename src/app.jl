@@ -29,9 +29,9 @@ function app(m; wait = 1 / 30)
       !isnothing(evt) && @debug "Got event" event = evt
       @debug "Updating model"
       update!(m, evt)
-      @info "Rendering model"
+      @debug "Rendering model"
       render(t, m)
-      @info "Drawing model"
+      @debug "Drawing model"
       draw(t)
     end
     @debug "End"
