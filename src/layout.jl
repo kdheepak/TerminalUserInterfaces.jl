@@ -118,19 +118,24 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   s = Solver()
   for (i, c) in enumerate(layout.constraints)
     if c isa Fixed
-      add_constraint(
-        s,
-        @constraint (variables[i].stop - variables[i].start) == c.value strength = KiwiConstraintSolver.STRONG
-      )
+      add_constraint(s, @constraint (variables[i].stop - variables[i].start) == c.value)
     elseif c isa Min
       add_constraint(
         s,
         @constraint (variables[i].stop - variables[i].start) >= c.value strength = KiwiConstraintSolver.STRONG
       )
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) == c.value strength = KiwiConstraintSolver.WEAK
+      )
     elseif c isa Max
       add_constraint(
         s,
         @constraint (variables[i].stop - variables[i].start) <= c.value strength = KiwiConstraintSolver.STRONG
+      )
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) == c.value strength = KiwiConstraintSolver.WEAK
       )
     elseif c isa Length
       add_constraint(
@@ -178,11 +183,11 @@ end
   constraints = [Percent(10), Max(5), Min(1)]
   r1, r2, r3 = split(Horizontal(constraints), target)
   @test r1 == Rect(; x = 2, y = 2, width = 1, height = 10)
-  @test r2 == Rect(; x = 3, y = 2, width = 4, height = 10)
+  @test r2 == Rect(; x = 3, y = 2, width = 5, height = 10)
   @test r3 == Rect(; x = 8, y = 2, width = 4, height = 10)
 end
 
-@testset "layout-rects-fixed" begin
+@testset "layout-rects-fixed-length" begin
   constraints = [Fixed(50), Fixed(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
@@ -196,6 +201,21 @@ end
   @test width(r2) == 25
   @test width(r3) == 25
   @test width(r4) == 25
+
+  constraints = [Fixed(50), Fixed(51)]
+  @test_throws KiwiConstraintSolver.UnsatisfiableConstraintException split(Horizontal(constraints), Rect(0, 0, 100, 1))
+
+  constraints = [Fixed(50), Length(51)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 50
+  @test width(r2) == 50
+
+  constraints = [Length(25), Min(50)]
+  r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  @test width(Rect(1, 1, 100, 1)) == 100
+  @test width(r1) == 25
+  @test width(r2) == 75
 end
 
 @testset "layout-rects-min" begin
@@ -236,6 +256,16 @@ end
   @test width(r2) == 50
   @test width(r3) == 17
   @test width(r4) == 17
+
+  constraints = [Min(5), Length(50), Min(15), Max(15)]
+  area = Rect(0, 0, 100, 1)
+  r = split(Horizontal(constraints), area)
+  r1, r2, r3, r4 = r
+  @test (r4.x + r4.width) - r1.x == width(area)
+  @test width(r1) == 18
+  @test width(r2) == 50
+  @test width(r3) == 18
+  @test width(r4) == 15
 
   constraints = [Length(5), Length(50), Max(8), Max(15)]
   r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
