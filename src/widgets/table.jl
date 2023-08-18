@@ -6,6 +6,7 @@ end
 @kwdef struct Row
   data::Vector{Datum}
   height::Int = 1
+  style::Crayon = Crayon()
   bottom_margin::Int = 0
 end
 
@@ -13,6 +14,7 @@ total_height(row::Row) = row.height + row.bottom_margin
 
 @kwdef mutable struct TableState
   selected::Union{Int,Nothing} = nothing
+  offset::Int = 1
 end
 
 @kwdef mutable struct Table
@@ -21,11 +23,12 @@ end
   state::TableState = TableState()
   block::Union{Nothing,Block} = Block()
   style::Crayon = Crayon()
-  column_spacing::Int = 0
+  column_spacing::Int = 1
   column_widths::Vector{Int} = []
   header::Union{Row,Nothing} = nothing
-  highlight_symbol::Union{String,Nothing} = ">"
+  highlight_symbol::String = ">"
   highlight_style::Crayon = Crayon()
+  highlight_spacing::Symbol = :when_selected
 end
 
 
@@ -88,10 +91,12 @@ function get_columns_widths(table::Table, max_width::Int)
 end
 
 function get_row_bounds(table::Table, max_height::Int)
-  start = 1
-  stop = 1
+  (; offset) = table.state
+  offset = min(length(table.rows), offset)
+  start = offset
+  stop = offset
   height = 0
-  for item in table.rows
+  for item in table.rows[offset:end]
     if height + item.height >= max_height
       break
     end
@@ -139,6 +144,7 @@ function render(table::Table, area::Rect, buf::Buffer)
   header_height = isnothing(table.header) ? 0 : (table.header.height)
   @debug "Calculate start_row stop_row"
   start_row, stop_row = get_row_bounds(table, height(area) - (header_height + 2))
+  table.state.offset = start_row
 
   # Optionally render block around the table
   if !isnothing(table.block)
