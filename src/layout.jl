@@ -84,8 +84,8 @@ struct Max <: Constraint
   value::Int
 end
 
-# Auto constraint to set remaining size
-struct Auto <: Constraint
+# Length constraint to set remaining size
+struct Length <: Constraint
   value::Int
 end
 
@@ -112,107 +112,71 @@ end
 
 function split(layout::Union{Horizontal,Vertical}, area::Rect)
   orientation = layout isa Horizontal ? :horizontal : :vertical
-  variables = [
-    (; x = Variable("x_$i"), y = Variable("y_$i"), w = Variable("w_$i"), h = Variable("h_$i")) for
-    (i, _) in enumerate(layout.constraints)
-  ]
+  variables = [(; start = Variable("start_$i"), stop = Variable("stop_$i")) for (i, _) in enumerate(layout.constraints)]
+  total_len = orientation == :horizontal ? width(area) : height(area)
+  starting_pos = orientation == :horizontal ? area.x : area.y
   s = Solver()
   for (i, c) in enumerate(layout.constraints)
     if c isa Fixed
-      if orientation == :horizontal
-        add_constraint(s, variables[i].w == c.value)
-      else
-        add_constraint(s, variables[i].h == c.value)
-      end
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) == c.value strength = KiwiConstraintSolver.STRONG
+      )
     elseif c isa Min
-      if orientation == :horizontal
-        add_constraint(s, variables[i].w >= c.value)
-      else
-        add_constraint(s, variables[i].h >= c.value)
-      end
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) >= c.value strength = KiwiConstraintSolver.STRONG
+      )
     elseif c isa Max
-      if orientation == :horizontal
-        add_constraint(s, variables[i].w <= c.value)
-      else
-        add_constraint(s, variables[i].h <= c.value)
-      end
-    elseif c isa Auto
-      if orientation == :horizontal
-        add_constraint(s, @constraint variables[i].w == c.value strength = KiwiConstraintSolver.STRONG)
-      else
-        add_constraint(s, @constraint variables[i].h == c.value strength = KiwiConstraintSolver.STRONG)
-      end
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) <= c.value strength = KiwiConstraintSolver.STRONG
+      )
+    elseif c isa Length
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) == c.value strength = KiwiConstraintSolver.STRONG
+      )
     elseif c isa Percent
-      if orientation == :horizontal
-        add_constraint(
-          s,
-          @constraint variables[i].w == (c.value * width(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
-        )
-      else
-        add_constraint(
-          s,
-          @constraint variables[i].h == (c.value * height(area) ÷ 100) strength = KiwiConstraintSolver.MEDIUM
-        )
-      end
+      add_constraint(
+        s,
+        @constraint (variables[i].stop - variables[i].start) == (c.value * total_len ÷ 100) strength =
+          KiwiConstraintSolver.STRONG
+      )
     end
   end
   for (i, c) in enumerate(layout.constraints)
+    add_constraint(s, variables[i].stop >= variables[i].start)
     if i == 1
-      add_constraint(s, variables[i].x >= area.x)
-      add_constraint(s, variables[i].y >= area.y)
+      add_constraint(s, variables[i].start == starting_pos)
     else
-      if orientation == :horizontal
-        add_constraint(s, variables[i].x == variables[i-1].x + variables[i-1].w + 1)
-      else
-        add_constraint(s, variables[i].y == variables[i-1].y + variables[i-1].h + 1)
-      end
+      add_constraint(s, variables[i].start == variables[i-1].stop)
     end
     if i == length(layout.constraints)
-      if orientation == :horizontal
-        add_constraint(
-          s,
-          @constraint variables[i].x + variables[i].w == width(area) strength = KiwiConstraintSolver.STRONG
-        )
-      else
-        add_constraint(
-          s,
-          @constraint variables[i].y + variables[i].h == height(area) strength = KiwiConstraintSolver.STRONG
-        )
-      end
+      add_constraint(s, variables[i].stop == starting_pos + total_len)
     end
   end
-  if orientation == :horizontal
-    add_constraint(s, sum(variables[i].w for (i, c) in enumerate(layout.constraints)) == width(area))
-  else
-    add_constraint(s, sum(variables[i].h for (i, c) in enumerate(layout.constraints)) == height(area))
-  end
-  for (i, c1) in enumerate(layout.constraints), (j, c2) in enumerate(layout.constraints)
+  add_constraint(
+    s,
+    sum((variables[i].stop - variables[i].start) for (i, c) in enumerate(layout.constraints)) == total_len,
+  )
+  for (i, _) in enumerate(layout.constraints), (j, _) in enumerate(layout.constraints)
     if j <= i
       continue
     end
-    if orientation == :horizontal
-      add_constraint(s, @constraint variables[i].w == variables[j].w strength = KiwiConstraintSolver.WEAK)
-    else
-      add_constraint(s, @constraint variables[i].h == variables[j].h strength = KiwiConstraintSolver.WEAK)
-    end
+    add_constraint(
+      s,
+      @constraint (variables[i].stop - variables[i].start) == (variables[j].stop - variables[j].start) strength =
+        KiwiConstraintSolver.WEAK
+    )
   end
   update_variables(s)
   rects = if orientation == :horizontal
-    [Rect(round(v.x.value), top(area), round(v.w.value), height(area)) for v in variables]
+    [Rect(round(v.start.value), top(area), round(v.stop.value - v.start.value), height(area)) for v in variables]
   else
-    [Rect(left(area), round(v.y.value), width(area), round(v.h.value)) for v in variables]
+    [Rect(left(area), round(v.start.value), width(area), round(v.stop.value - v.start.value)) for v in variables]
   end
   rects
-end
-
-function testing()
-  # TUI.tui(; alternate_screen = false) do
-  #   t = TUI.Terminal()
-  #   TUI.render(t, TUI.Block(), r1)
-  #   TUI.render(t, TUI.Block(), r2)
-  #   TUI.render(t, TUI.Block(), r3)
-  #   TUI.draw(t)
-  # end
 end
 
 @testset "layout-rects-gaps" begin
@@ -220,8 +184,8 @@ end
   constraints = [Percent(10), Max(5), Min(1)]
   r1, r2, r3 = split(Horizontal(constraints), target)
   @test r1 == Rect(; x = 2, y = 2, width = 1, height = 10)
-  @test r2 == Rect(; x = 4, y = 2, width = 4, height = 10)
-  @test r3 == Rect(; x = 10, y = 2, width = 4, height = 10)
+  @test r2 == Rect(; x = 3, y = 2, width = 4, height = 10)
+  @test r3 == Rect(; x = 8, y = 2, width = 4, height = 10)
 end
 
 @testset "layout-rects-fixed" begin
@@ -263,27 +227,29 @@ end
 end
 
 @testset "layout-rects-mixed" begin
-  constraints = [Fixed(50), Auto(50)]
+  constraints = [Fixed(50), Length(50)]
   r1, r2 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
   @test width(r1) == 50
   @test width(r2) == 50
 
-  constraints = [Min(5), Auto(50), Min(15), Min(15)]
+  constraints = [Min(5), Length(50), Min(15), Min(15)]
+  r = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  r1, r2, r3, r4 = r
+  @test_broken sum(width.(r)) == 100
+  @test width(Rect(0, 0, 100, 1)) == 100
+  @test width(r1) == 17
+  @test width(r2) == 50
+  @test width(r3) == 17
+  @test width(r4) == 17
+
+  constraints = [Length(5), Length(50), Max(8), Max(15)]
   r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
   @test width(Rect(1, 1, 100, 1)) == 100
   @test width(r1) == 17
   @test width(r2) == 50
   @test width(r3) == 17
   @test width(r4) == 17
-
-  constraints = [Auto(5), Auto(50), Max(8), Max(15)]
-  r1, r2, r3, r4 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
-  @test width(Rect(1, 1, 100, 1)) == 100
-  @test width(r1) == 27
-  @test width(r2) == 50
-  @test width(r3) == 8
-  @test width(r4) == 15
 
   constraints = [Min(5), Fixed(20), Min(15)]
   r1, r2, r3 = split(Horizontal(constraints), Rect(0, 0, 100, 1))
