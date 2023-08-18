@@ -145,21 +145,15 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
       )
     end
   end
+  add_constraint(s, variables[begin].start == starting_pos)
+  add_constraint(s, variables[end].stop == starting_pos + total_len)
   for (i, c) in enumerate(layout.constraints)
     add_constraint(s, variables[i].stop >= variables[i].start)
-    if i == 1
-      add_constraint(s, variables[i].start == starting_pos)
-    else
+    if i != 1
       add_constraint(s, variables[i].start == variables[i-1].stop)
     end
-    if i == length(layout.constraints)
-      add_constraint(s, variables[i].stop == starting_pos + total_len)
-    end
   end
-  add_constraint(
-    s,
-    sum((variables[i].stop - variables[i].start) for (i, c) in enumerate(layout.constraints)) == total_len,
-  )
+  add_constraint(s, variables[end].stop - variables[begin].start == total_len)
   for (i, _) in enumerate(layout.constraints), (j, _) in enumerate(layout.constraints)
     if j <= i
       continue
@@ -234,10 +228,10 @@ end
   @test width(r2) == 50
 
   constraints = [Min(5), Length(50), Min(15), Min(15)]
-  r = split(Horizontal(constraints), Rect(0, 0, 100, 1))
+  area = Rect(0, 0, 100, 1)
+  r = split(Horizontal(constraints), area)
   r1, r2, r3, r4 = r
-  @test_broken sum(width.(r)) == 100
-  @test width(Rect(0, 0, 100, 1)) == 100
+  @test (r4.x + r4.width) - r1.x == width(area)
   @test width(r1) == 17
   @test width(r2) == 50
   @test width(r3) == 17
