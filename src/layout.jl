@@ -116,6 +116,15 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   total_len = orientation == :horizontal ? width(area) : height(area)
   starting_pos = orientation == :horizontal ? area.x : area.y
   s = Solver()
+  add_constraint(s, variables[begin].start == starting_pos)
+  add_constraint(s, variables[end].stop == starting_pos + total_len)
+  for (i, c) in enumerate(layout.constraints)
+    add_constraint(s, variables[i].stop >= variables[i].start)
+    if i != 1
+      add_constraint(s, variables[i].start == variables[i-1].stop)
+    end
+  end
+  add_constraint(s, variables[end].stop - variables[begin].start == total_len)
   for (i, c) in enumerate(layout.constraints)
     if c isa Fixed
       add_constraint(s, @constraint (variables[i].stop - variables[i].start) == c.value)
@@ -150,15 +159,6 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
       )
     end
   end
-  add_constraint(s, variables[begin].start == starting_pos)
-  add_constraint(s, variables[end].stop == starting_pos + total_len)
-  for (i, c) in enumerate(layout.constraints)
-    add_constraint(s, variables[i].stop >= variables[i].start)
-    if i != 1
-      add_constraint(s, variables[i].start == variables[i-1].stop)
-    end
-  end
-  add_constraint(s, variables[end].stop - variables[begin].start == total_len)
   for (i, _) in enumerate(layout.constraints), (j, _) in enumerate(layout.constraints)
     if j <= i
       continue
