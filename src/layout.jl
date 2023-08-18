@@ -116,6 +116,7 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
   total_len = orientation == :horizontal ? width(area) : height(area)
   starting_pos = orientation == :horizontal ? area.x : area.y
   s = Solver()
+
   add_constraint(s, variables[begin].start == starting_pos)
   add_constraint(s, variables[end].stop == starting_pos + total_len)
   for (i, c) in enumerate(layout.constraints)
@@ -125,6 +126,7 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
     end
   end
   add_constraint(s, variables[end].stop - variables[begin].start == total_len)
+
   for (i, c) in enumerate(layout.constraints)
     if c isa Fixed
       add_constraint(s, @constraint (variables[i].stop - variables[i].start) == c.value)
@@ -159,6 +161,7 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
       )
     end
   end
+
   for (i, _) in enumerate(layout.constraints), (j, _) in enumerate(layout.constraints)
     if j <= i
       continue
@@ -169,7 +172,9 @@ function split(layout::Union{Horizontal,Vertical}, area::Rect)
         KiwiConstraintSolver.WEAK
     )
   end
+
   update_variables(s)
+
   rects = if orientation == :horizontal
     [Rect(round(v.start.value), top(area), round(v.stop.value - v.start.value), height(area)) for v in variables]
   else
