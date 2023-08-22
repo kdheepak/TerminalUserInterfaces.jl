@@ -80,6 +80,10 @@ function previous(table::Table)
   table.state.selected = selection
 end
 
+function recalculate_view(table::Table)
+  table.column_widths = []
+end
+
 function get_columns_widths(table::Table, max_width::Int)
   constraints = Constraint[]
   for constraint in table.widths

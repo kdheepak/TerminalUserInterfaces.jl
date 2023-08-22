@@ -1,8 +1,17 @@
 
+"""
+```julia
+import TerminalUserInterface as TUI
+
+struct TUIModel <: TUI.Model
+  quit::Bool
+end
+```
+"""
 abstract type Model end
 
 terminal(::Model) = TERMINAL[]
-init!(m::Model, ::Terminal) = m.quit = false
+init!(m::Model, ::TerminalBackend) = m.quit = false
 update!(m::Model, ::Crossterm.Event) = update!(m)
 update!(::Model, ::Nothing) = nothing
 update!(::Model) = @info "No update"

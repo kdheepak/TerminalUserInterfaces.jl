@@ -1,10 +1,12 @@
 import Base.print
 import Dates
 
+abstract type TerminalBackend end
+
 """
-Terminal
+CrosstermTerminal
 """
-struct Terminal
+struct CrosstermTerminal <: TerminalBackend
   buffers::Vector{Buffer}
   current::Ref{UInt8}
   previous::Ref{UInt8}
@@ -13,27 +15,26 @@ struct Terminal
   keyboard_buffer::Vector{Char}
   kind::String
   wait::Float64
-  ispaused::Ref{Bool}
-  isclosed::Ref{Bool}
-  function Terminal()
+  function CrosstermTerminal()
     (; w, h) = Crossterm.size()
     rect = Rect(1, 1, w, h)
     buffers = [Buffer(rect), Buffer(rect)]
     current = 1
     previous = 2
     cursor_hidden = false
-    ispaused = Ref{Bool}(false)
-    isclosed = Ref{Bool}(false)
-    t = new(buffers, current, previous, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000, ispaused, isclosed)
+    t = new(buffers, current, previous, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000)
     TERMINAL[] = t
     return t
   end
 end
 
-function close(t::Terminal)
-  t.isclosed[] = true
-  t.ispaused[] = true
-end
+# TODO: come up with better way to expose terminal
+const TERMINAL = Ref{CrosstermTerminal}()
+
+# TODO: make terminal function return any backend. Right now there's only one backend - `CrosstermTerminal`
+Terminal() = CrosstermTerminal()
+
+function close(::CrosstermTerminal) end
 
 """
 Get event (nonblocking)
@@ -42,7 +43,7 @@ Get event (nonblocking)
 
 - wait (seconds)
 """
-function try_get_event(t::Terminal; wait = t.wait)
+function try_get_event(t::CrosstermTerminal; wait = t.wait)
   if Crossterm.poll(Dates.Nanosecond(round(wait * 1e9)))
     Crossterm.read()
   else
@@ -53,29 +54,32 @@ end
 """
 Get event (blocking)
 """
-function get_event(::Terminal)
+function get_event(::CrosstermTerminal)
   Crossterm.read()
 end
 
-function update!(t::Terminal, evt) end
-function update!(t::Terminal, evt::Crossterm.Event{Crossterm.MouseEvent}) end
-function update!(t::Terminal, evt::Crossterm.Event{Crossterm.KeyEvent}) end
-function update!(t::Terminal, evt::Crossterm.Event{Crossterm.ResizeEvent})
+"""
+Flush terminal
+"""
+flush(::CrosstermTerminal) = Crossterm.flush()
+
+function update!(t::CrosstermTerminal, evt) end
+function update!(t::CrosstermTerminal, evt::Crossterm.Event{Crossterm.MouseEvent}) end
+function update!(t::CrosstermTerminal, evt::Crossterm.Event{Crossterm.KeyEvent}) end
+function update!(t::CrosstermTerminal, evt::Crossterm.Event{Crossterm.ResizeEvent})
   (; w, h) = evt.data
   resize(t, w, h)
   clear_screen(t)
   move_cursor_home(t)
-  Crossterm.flush()
+  flush(t)
 end
-
-const TERMINAL = Ref{Terminal}()
 
 const END = 2 + 1
 
 """
 Draw terminal contents
 """
-function draw(t::Terminal)
+function draw(t::CrosstermTerminal)
   pb = previous_buffer(t)
   cb = current_buffer(t)
   save_cursor(t)
@@ -104,122 +108,122 @@ end
 """
 Move cursor
 """
-move_cursor(t::Terminal, row, col) = Crossterm.to(; x = col - 1, y = row - 1)
+move_cursor(::CrosstermTerminal, row, col) = Crossterm.to(; x = col - 1, y = row - 1)
 """
 Move cursor up
 """
-move_cursor_up(t::Terminal, row = 1) = Crossterm.up(row)
+move_cursor_up(::CrosstermTerminal, row = 1) = Crossterm.up(row)
 """
 Move cursor down
 """
-move_cursor_down(t::Terminal, row = 1) = Crossterm.down(row)
+move_cursor_down(::CrosstermTerminal, row = 1) = Crossterm.down(row)
 """
 Move cursor right
 """
-move_cursor_right(t::Terminal, col = 1) = Crossterm.right(col)
+move_cursor_right(::CrosstermTerminal, col = 1) = Crossterm.right(col)
 """
 Move cursor left
 """
-move_cursor_left(t::Terminal, col = 1) = Crossterm.left(col)
+move_cursor_left(::CrosstermTerminal, col = 1) = Crossterm.left(col)
 """
 Move cursor home
 """
-move_cursor_home(t::Terminal) = Crossterm.to(; x = 0, y = 0)
+move_cursor_home(::CrosstermTerminal) = Crossterm.to(; x = 0, y = 0)
 
 """
 Clear screen
 """
-clear_screen(t::Terminal) = Crossterm.clear()
+clear_screen(::CrosstermTerminal) = Crossterm.clear()
 """
 Clear screen from cursor up onwards
 """
-clear_screen_from_cursor_up(t::Terminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_UP)
+clear_screen_from_cursor_up(::CrosstermTerminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_UP)
 """
 Clear screen from cursor down onwards
 """
-clear_screen_from_cursor_down(t::Terminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_DOWN)
+clear_screen_from_cursor_down(::CrosstermTerminal) = Crossterm.clear(Crossterm.ClearType.FROM_CURSOR_DOWN)
 
 """
 Clear line
 """
-clear_line(t::Terminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
+clear_line(::CrosstermTerminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
 """
 Clear line from cursor right onwards
 """
-clear_line_from_cursor_right(t::Terminal) = Crossterm.clear(Crossterm.ClearType.UNTIL_NEW_LINE)
+clear_line_from_cursor_right(::CrosstermTerminal) = Crossterm.clear(Crossterm.ClearType.UNTIL_NEW_LINE)
 """
 Clear line from cursor left onwards
 """
-clear_line_from_cursor_left(t::Terminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
+clear_line_from_cursor_left(::CrosstermTerminal) = Crossterm.clear(Crossterm.ClearType.CURRENT_LINE)
 
 """
 Hide cursor
 """
-hide_cursor(t::Terminal) = Crossterm.hide()
+hide_cursor(::CrosstermTerminal) = Crossterm.hide()
 """
 Show cursor
 """
-show_cursor(t::Terminal) = Crossterm.show()
+show_cursor(::CrosstermTerminal) = Crossterm.show()
 
 """
 Save cursor
 """
-save_cursor(t::Terminal) = Crossterm.save()
+save_cursor(::CrosstermTerminal) = Crossterm.save()
 """
 Restore cursor
 """
-restore_cursor(t::Terminal) = Crossterm.restore()
+restore_cursor(::CrosstermTerminal) = Crossterm.restore()
 
 """
 Change cursor to default
 """
-change_cursor_to_default(t::Terminal) = Crossterm.style(Crossterm.Style.DEFAULT_USER_SHAPE)
+change_cursor_to_default(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.DEFAULT_USER_SHAPE)
 
 """
 Change cursor to blinking block
 """
-change_cursor_to_blinking_block(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_BLOCK)
+change_cursor_to_blinking_block(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.BLINKING_BLOCK)
 
 """
 Change cursor to steady block
 """
-change_cursor_to_steady_block(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_BLOCK)
+change_cursor_to_steady_block(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.STEADY_BLOCK)
 """
 Change cursor to blinking underline
 """
-change_cursor_to_blinking_underline(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_UNDER_SCORE)
+change_cursor_to_blinking_underline(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.BLINKING_UNDER_SCORE)
 """
 Change cursor to steady underline
 """
-change_cursor_to_steady_underline(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_UNDER_SCORE)
+change_cursor_to_steady_underline(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.STEADY_UNDER_SCORE)
 """
 Change cursor to blinking ibeam
 """
-change_cursor_to_blinking_ibeam(t::Terminal) = Crossterm.style(Crossterm.Style.BLINKING_BAR)
+change_cursor_to_blinking_ibeam(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.BLINKING_BAR)
 """
 Change cursor to steady ibeam
 """
-change_cursor_to_steady_ibeam(t::Terminal) = Crossterm.style(Crossterm.Style.STEADY_BAR)
+change_cursor_to_steady_ibeam(::CrosstermTerminal) = Crossterm.style(Crossterm.Style.STEADY_BAR)
 
 """
 Alternate screen TUI mode
 """
-tui_mode(t::Terminal) = Crossterm.alternate_screen(true)
+tui_mode(::CrosstermTerminal) = Crossterm.alternate_screen(true)
 """
 Default mode
 """
-default_mode(t::Terminal) = Crossterm.alternate_screen(false)
+default_mode(::CrosstermTerminal) = Crossterm.alternate_screen(false)
 
 """
 Get current buffer
 """
-current_buffer(t::Terminal)::Buffer = t.buffers[t.current[]]
+current_buffer(t::CrosstermTerminal)::Buffer = t.buffers[t.current[]]
 current_buffer()::Buffer = current_buffer(TERMINAL[])
 
 """
 Get previous buffer
 """
-previous_buffer(t::Terminal)::Buffer = t.buffers[t.previous[]]
+previous_buffer(t::CrosstermTerminal)::Buffer = t.buffers[t.previous[]]
 previous_buffer()::Buffer = previous_buffer(TERMINAL[])
 
 put(c::SubString{String}) = Crossterm.print(string(c))
@@ -231,13 +235,13 @@ function put(cell::Cell)
   put(string(inv(cell.style)))
 end
 
-render(t::Terminal, widget) = render(t, widget, area(t))
-render(t::Terminal, widget, r::Rect) = render(widget, r, current_buffer(t))
+render(t::CrosstermTerminal, widget) = render(t, widget, area(t))
+render(t::CrosstermTerminal, widget, r::Rect) = render(widget, r, current_buffer(t))
 
 """
 Resize terminal
 """
-function resize(t::Terminal, w::Int, h::Int)
+function resize(t::CrosstermTerminal, w::Int, h::Int)
   rect = Rect(1, 1, w, h)
   t.terminal_size[] = rect
   t.buffers[t.current[]] = Buffer(rect)
@@ -247,7 +251,9 @@ end
 """
 Area of terminal as Rect (width, height)
 """
-area(t::Terminal) = t.terminal_size[]
+function area(t::CrosstermTerminal)
+  t.terminal_size[]
+end
 
 function tui(f::Function; flags...)
   r = nothing

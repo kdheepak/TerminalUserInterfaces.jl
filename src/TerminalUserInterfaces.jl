@@ -9,8 +9,6 @@ using InlineTest
 using KiwiConstraintSolver
 using Tables
 
-export Terminal
-
 const TUI = TerminalUserInterfaces
 
 include("logger.jl")

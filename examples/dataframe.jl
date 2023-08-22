@@ -13,8 +13,14 @@ function TUI.view(m::Model)
   m.table
 end
 
-function TUI.update!(m::Model, evt::TUI.KeyEvent)
+function TUI.update!(m::Model, evt::TUI.ResizeEvent)
   @info "" evt
+  TUI.recalculate_view(m.table)
+  TUI.update!(TUI.terminal(m), evt)
+end
+
+function TUI.update!(m::Model, evt::TUI.KeyEvent)
+  # @info "" evt
   if TUI.keypress(evt) == "q"
     m.quit = true
   elseif TUI.keypress(evt) == "j"
