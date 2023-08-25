@@ -30,11 +30,11 @@ render(m::Model, r::Rect, buf::Buffer) =
 function app(m; wait = 1 / 30)
   tui() do
     @debug "Creating terminal"
-    t = Terminal()
+    t = Terminal(; wait)
     init!(m, t)
     while !should_quit(m)
       @debug "Getting event"
-      evt = try_get_event(t; wait)
+      evt = try_get_event(t)
       !isnothing(evt) && @debug "Got event" event = evt
       @debug "Updating model"
       update!(m, evt)

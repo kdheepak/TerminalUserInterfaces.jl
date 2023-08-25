@@ -15,14 +15,14 @@ struct CrosstermTerminal <: TerminalBackend
   keyboard_buffer::Vector{Char}
   kind::String
   wait::Float64
-  function CrosstermTerminal()
+  function CrosstermTerminal(; wait = 1 / 1000)
     (; w, h) = Crossterm.size()
     rect = Rect(1, 1, w, h)
     buffers = [Buffer(rect), Buffer(rect)]
     current = 1
     previous = 2
     cursor_hidden = false
-    t = new(buffers, current, previous, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), 1 / 1000)
+    t = new(buffers, current, previous, cursor_hidden, rect, Char[], get(ENV, "TERM", ""), wait)
     TERMINAL[] = t
     return t
   end
@@ -32,7 +32,7 @@ end
 const TERMINAL = Ref{CrosstermTerminal}()
 
 # TODO: make terminal function return any backend. Right now there's only one backend - `CrosstermTerminal`
-Terminal() = CrosstermTerminal()
+Terminal(; wait = 1 / 1000) = CrosstermTerminal(; wait)
 
 function close(::CrosstermTerminal) end
 
