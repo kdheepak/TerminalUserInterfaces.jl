@@ -1,6 +1,7 @@
 using Documenter, TerminalUserInterfaces
 
 cp(joinpath(@__DIR__, "../README.md"), joinpath(@__DIR__, "./src/index.md"); force = true, follow_symlinks = true)
+cp(joinpath(@__DIR__, "../docs/README.md"), joinpath(@__DIR__, "./src/showcase.md"); force = true, follow_symlinks = true)
 
 makedocs(; sitename = "TerminalUserInterfaces.jl documentation")
 
