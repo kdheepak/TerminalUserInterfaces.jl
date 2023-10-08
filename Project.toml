@@ -1,7 +1,7 @@
 name = "TerminalUserInterfaces"
 uuid = "408767e4-586b-40c7-9657-f9758988469a"
 authors = ["Dheepak Krishnamurthy <me@kdheepak.com>"]
-version = "0.7.0"
+version = "0.8.0"
 
 [deps]
 Crayons = "a8cc5b0e-0ffa-5ad4-8c14-923d3ee1735f"
