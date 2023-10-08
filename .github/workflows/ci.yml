@@ -52,9 +52,6 @@ jobs:
       - uses: julia-actions/setup-julia@v1
         with:
           version: "1"
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.7"
       - run: |
           julia --project=docs -e '
             using Pkg
