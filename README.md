@@ -17,7 +17,9 @@ pkg> add TerminalUserInterfaces
 
 ### Usage
 
-See [documentation](https://kdheepak.com/TerminalUserInterfaces.jl/) and [examples folder](./examples) for information how to use the package.
+See [documentation](https://kdheepak.com/TerminalUserInterfaces.jl/) and
+[examples folder](https://github.com/kdheepak/TerminalUserInterfaces.jl/blob/main/examples) for
+information how to use the package.
 
 Check out my JuliaCon talk where I use this package to make a presentation in the terminal.
 

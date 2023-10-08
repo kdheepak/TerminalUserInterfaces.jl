@@ -1,2 +1,4 @@
 Manifest.toml
 log/
+docs/build
+docs/index.md
